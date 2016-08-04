@@ -19,10 +19,23 @@ const profile = new SimpleSchema({
     },
     plant: {
     	type: String,
+    	autoValue: function(){
+	        // User's plant can only be defined by administratores, otherwise it will have the same plant as the user that is inserting the new user
+	        const user = Meteor.users.findOne(this.userId);
+    	    if (user && user.profile.admin){
+    	        return undefined;
+    	    } else if (user) {
+    	        return user.profile.plant;
+    	    } else {
+    	        this.unset();
+    	    }
+    	},
+    	label: 'Fábrica',
     	autoform: {
     		type: 'select',
     		options: [
-    			{label: 'Maia', value: 'maia'}
+    			{label: 'Maia', value: 'maia'},
+    			{label: 'VFXira', value: 'vfxira'}
     		]
     	}
     },
@@ -144,10 +157,16 @@ export const createNewUser = new ValidatedMethod({
 		let canBeAdmin = newUser.profile.admin && user.profile.admin ? true : false;
 		// New users can only be managers if inserted by another manager or by administrator
 		let canBeManager = (user.profile.admin || user.profile.manager) && (newUser.profile.admin || newUser.profile.manager) ? true : false;
+	   
+	    
         Accounts.createUser({
             username: newUser.username,
             password: 'xxxxxx',
             profile: {
+                // Although defined here, the user Schema has an autovalue function.
+                // If one user that is not admin tries to define the newuser's plant, 
+                // automaticaly the newUser gets the same plant that the user that is inserting the newUser,
+                // so that only administratores can define newUser's plant.
                 plant: newUser.profile.plant,
                 admin: canBeAdmin,
                 manager: canBeManager

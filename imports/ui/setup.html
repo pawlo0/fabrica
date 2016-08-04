@@ -10,8 +10,8 @@
                 <h3>Adicionar utilizador</h3>
                 {{#autoForm collection="Meteor.users" id="newUser" type="method" meteormethod="createNewUser" class="form-inline"}}
                     {{> afQuickField name='username'}}
-                    {{> afQuickField name='profile.plant'}}
                     {{#if admin}}
+                        {{> afQuickField name='profile.plant'}}
                         {{> afQuickField name='profile.admin'}}
                     {{/if}}
                     {{> afQuickField name='profile.manager'}}
