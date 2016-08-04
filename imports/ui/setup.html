@@ -1,0 +1,27 @@
+<template name="setup">
+    <div class="container">
+    {{#if manager}}
+        <h1>Configurações</h1>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gestão de utilizadores</h3>
+            </div>
+            <div class="panel-body">
+                <h3>Adicionar utilizador</h3>
+                {{#autoForm collection="Meteor.users" id="newUser" type="method" meteormethod="createNewUser" class="form-inline"}}
+                    {{> afQuickField name='username'}}
+                    {{> afQuickField name='profile.plant'}}
+                    {{#if admin}}
+                        {{> afQuickField name='profile.admin'}}
+                    {{/if}}
+                    {{> afQuickField name='profile.manager'}}
+                    <button type="submit" class="btn btn-primary">Criar utilizador</button>
+                {{/autoForm}}
+            </div>
+        </div>
+    {{else}}
+        <h3>Não autorizado</h3>
+        <a href="/">Regressar</a>
+    {{/if}}
+    </div>
+</template>

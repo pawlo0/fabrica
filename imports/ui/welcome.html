@@ -1,7 +1,11 @@
 <template name="welcome">
     <div class="container">
         <div class="jumbotron">
-            <h1>Fábrica da Maia</h1>
+            {{#if currentUser}}
+            <h1>Fábrica: {{userPlant}}</h1>
+            {{else}}
+            <h1>Gestão de Fábrica</h1>
+            {{/if}}
             <p>Bem vindo!</p>
         </div>
     </div>

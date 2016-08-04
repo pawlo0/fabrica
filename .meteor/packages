@@ -17,13 +17,13 @@ standard-minifier-js@1.1.8    # JS minifier run for production mode
 es5-shim@4.6.13                # ECMAScript 5 compatibility for older browsers.
 ecmascript@0.5.7              # Enable ECMAScript2015+ syntax in app code
 
-autopublish@1.0.7             # Publish all data to the clients (for prototyping)
-insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
 kadira:flow-router
 kadira:blaze-layout
 twbs:bootstrap
-accounts-password
+accounts-password@1.2.12
 useraccounts:bootstrap
 peppelg:bootstrap-3-modal
 softwarerero:accounts-t9n
 mdg:validated-method
+aldeed:collection2
+aldeed:autoform

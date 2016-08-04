@@ -5,6 +5,14 @@ import { T9n } from 'meteor/softwarerero:accounts-t9n';
 import '../api/users.js';
 import './navbar.html';
 
+Template.navbar.helpers({
+    'manager'(){
+        if (Meteor.user()) {
+            return Meteor.user().profile.manager;
+        }
+    }
+});
+
 Template.navbar.events({
     'click .js-loginButton'(event) {
         event.preventDefault();
