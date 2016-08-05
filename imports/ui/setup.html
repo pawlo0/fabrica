@@ -19,6 +19,21 @@
                 {{/autoForm}}
             </div>
         </div>
+        {{#if admin}}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gestão de fábricas</h3>
+            </div>
+            <div class="panel-body">
+                <h3>Adicionar fábrica</h3>
+                {{#autoForm collection=plants id="newPlant" type="method" meteormethod="insertPlant" class="form-inline"}}
+                    {{> afQuickField name='plantName'}}
+                    <button type="submit" class="btn btn-primary">Criar fábrica</button>
+                {{/autoForm}}
+            </div>
+        </div>        
+        {{/if}}
+        <div class=""></div>
     {{else}}
         <h3>Não autorizado</h3>
         <a href="/">Regressar</a>

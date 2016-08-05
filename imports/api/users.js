@@ -3,6 +3,8 @@ import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
+import { Plants } from './plants.js';
+
 
 // User profile schema to be used in user schema
 const profile = new SimpleSchema({
@@ -20,9 +22,11 @@ const profile = new SimpleSchema({
     plant: {
     	type: String,
     	autoValue: function(){
-	        // User's plant can only be defined by administratores, otherwise it will have the same plant as the user that is inserting the new user
+	        // User's plant can only be defined by administratores, 
+	        // Or if is inserted by server.
+	        // Otherwise it will have the same plant as the user that is inserting the newUser
 	        const user = Meteor.users.findOne(this.userId);
-    	    if (user && user.profile.admin){
+    	    if ((user && user.profile.admin) || this.isFromTrustedCode){
     	        return undefined;
     	    } else if (user) {
     	        return user.profile.plant;
@@ -33,10 +37,11 @@ const profile = new SimpleSchema({
     	label: 'Fábrica',
     	autoform: {
     		type: 'select',
-    		options: [
-    			{label: 'Maia', value: 'maia'},
-    			{label: 'VFXira', value: 'vfxira'}
-    		]
+    		options: function(){
+    		    return Plants.find().map(function(obj){
+    		        return {value: obj.plantName, label: obj.plantName};
+    		    });
+    		}
     	}
     },
     admin: {
