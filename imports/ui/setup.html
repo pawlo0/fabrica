@@ -8,7 +8,7 @@
             </div>
             <div class="panel-body">
                 <h3>Adicionar utilizador</h3>
-                {{#autoForm collection="Meteor.users" id="newUser" type="method" meteormethod="createNewUser" class="form-inline"}}
+                {{#autoForm collection="Meteor.users" id="newUserForm" type="method" meteormethod="createNewUser" class="form-inline"}}
                     {{> afQuickField name='username'}}
                     {{#if admin}}
                         {{> afQuickField name='profile.plant'}}
@@ -26,14 +26,30 @@
             </div>
             <div class="panel-body">
                 <h3>Adicionar fábrica</h3>
-                {{#autoForm collection=plants id="newPlant" type="method" meteormethod="insertPlant" class="form-inline"}}
+                {{#autoForm collection=plants id="newPlantForm" type="method" meteormethod="insertPlant" class="form-inline"}}
                     {{> afQuickField name='plantName'}}
                     <button type="submit" class="btn btn-primary">Criar fábrica</button>
                 {{/autoForm}}
             </div>
-        </div>        
+        </div>
         {{/if}}
-        <div class=""></div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gestão de tipos de elementos</h3>
+            </div>
+            <div class="panel-body">
+                <h3>Adicionar tipo de elemento</h3>
+                {{#autoForm collection=categories id="newCategoryForm" type="method" meteormethod="insertCategory" class="form-inline"}}
+                    {{> afQuickField name='categoryName'}}
+                    {{> afQuickField name='initials' class="js-toUpperCase"}}
+                    {{#if admin}}
+                        {{> afQuickField name='plant'}}
+                    {{/if}}
+                    {{> afQuickField name='type'}}
+                    <button type="submit" class="btn btn-primary">Criar tipo</button>
+                {{/autoForm}}
+            </div>
+        </div>
     {{else}}
         <h3>Não autorizado</h3>
         <a href="/">Regressar</a>

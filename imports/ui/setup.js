@@ -1,5 +1,5 @@
 import { Plants } from '../api/plants.js';
-
+import { Categories } from '../api/categories.js';
 import './setup.html';
 
 Template.setup.onCreated(function() {
@@ -22,5 +22,14 @@ Template.setup.helpers({
     },
     'plants'(){
         return Plants;
+    },
+    'categories'(){
+        return Categories;
     }
 });
+
+Template.setup.events({
+    'keyup .js-toUpperCase'(event){
+        event.currentTarget.value = event.currentTarget.value.toUpperCase(); 
+    }
+})
