@@ -1,10 +1,10 @@
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { ReactiveVar } from 'meteor/reactive-var';
 
 import { Elements } from '../api/elements.js';
 
 import './elementsList.html';
+
 
 Template.elementsList.onCreated(function(){
     const self = this;

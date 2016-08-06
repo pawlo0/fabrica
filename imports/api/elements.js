@@ -1,5 +1,6 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { Tabular } from 'meteor/aldeed:tabular';
 
 import { Categories } from '../api/categories.js';
 import { Plants } from './plants.js';
@@ -89,4 +90,49 @@ export const insertElement = new ValidatedMethod({
             });
         }
     }
+});
+
+
+// Code for the elements table
+export const TabularTables = {};
+TabularTables.Elements= new Tabular.Table({
+    name: 'Elements',
+    collection: Elements,
+    selector: function (userId) {
+        const user = Meteor.users.findOne(userId);
+        if (user) {
+            if (user.profile.admin) {
+                return {};
+            } else {
+                return {plant: user.profile.plant};
+            }
+        } else {
+            return false;
+        }
+    },
+    columns: [
+        { 
+            data: 'elementNumber', 
+            title: 'Número',
+            render: function(val, type, doc) {
+                const elementInitials = Categories.findOne(doc.elementType).initials;
+                if (val < 10 ) {
+                    val = '00' + val;
+                } else if (val < 100 ){
+                    val = '0' + val;
+                }
+                return elementInitials + '-' + val;
+            }
+        },
+        { 
+            data: 'elementType', 
+            title: 'Tipo',
+            render: function(val, type, doc) {
+                return Categories.findOne(doc.elementType).categoryName;
+            }
+        }
+    ],
+    responsive: true,
+    autoWidth: false,
+    order: [[1, 'asc'], [0,'asc']]
 });
