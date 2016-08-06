@@ -1,5 +1,6 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { Tabular } from 'meteor/aldeed:tabular';
 
 import { Plants } from './plants.js';
 
@@ -65,6 +66,12 @@ export const insertCategory = new ValidatedMethod({
         schema.validator({clean: true});
     },
     run({categoryName, initials, plant, type}){
+        const user = Meteor.users.findOne(this.userId);
+        // Only administrators can make categories for another plants.
+        // Otherwise, the plant field will be the user's plant
+        if (!user.profile.admin) {
+            plant = user.profile.plant;
+        }
         Categories.insert({
             categoryName,
             initials,
@@ -72,4 +79,49 @@ export const insertCategory = new ValidatedMethod({
             type
         });
     }
-})
+});
+
+
+
+// Code for the table of categories, 
+// it has to be placed in "common place", to run in server and client
+export const TabularTables = {};
+TabularTables.Categories= new Tabular.Table({
+    name: 'Categories',
+    collection: Categories,
+    selector: function (userId) {
+        const user = Meteor.users.findOne(userId);
+        if (user) {
+            if (user.profile.admin) {
+                return {};
+            } else {
+                return {plant: user.profile.plant};
+            }
+        } else {
+            return false;
+        }
+    },
+    columns: [
+        {data: 'categoryName', title: 'Designação'},
+        {data: 'initials', title: 'Iniciais'},
+        {
+            data: 'type', 
+            title: 'Tipo',
+            render: function (val, type, doc) {
+                if (val == 'hasMaintenance') {
+                    return 'Com Manutenção';
+                } else if (val == 'hasSetpoint') {
+                    return 'Com Set-Point';
+                } else if (val == 'hasCalibration') {
+                    return 'Com Calibração';
+                } else {
+                    return val;
+                }
+            }            
+        },
+        {data: 'plant', title: 'Fábrica'}
+    ],
+    responsive: true,
+    autoWidth: false,
+    order: [[ 3, "asc" ], [0, "asc"]]
+});

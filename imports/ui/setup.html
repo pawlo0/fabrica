@@ -48,6 +48,8 @@
                     {{> afQuickField name='type'}}
                     <button type="submit" class="btn btn-primary">Criar tipo</button>
                 {{/autoForm}}
+                <hr/>
+                {{> tabular table=TabularTables.Categories class="table table-striped table-bordered table-condensed"}}
             </div>
         </div>
     {{else}}
