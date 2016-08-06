@@ -15,6 +15,9 @@
                 </div>
                 {{#autoForm collection=elements id='addElementForm' type='method' meteormethod='insertElement'}}
                 <div class="modal-body">
+                    {{#if duplicateAlert}}
+                        <div class="alert alert-warning" role="alert">Atenção, o elemento com esse número já existe!</div>
+                    {{/if}}
                     {{> afQuickField name='elementType'}}
                     {{> afQuickField name='elementNumber' }}
                 </div>

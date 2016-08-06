@@ -78,10 +78,15 @@ export const insertElement = new ValidatedMethod({
         if (!user.profile.admin) {
             newElement.plant = user.profile.plant;
         }
-        Elements.insert({
-            elementNumber: newElement.elementNumber,
-            elementType: newElement.elementType,
-            plant: newElement.plant
-        });
+        
+        if (Elements.findOne({elementNumber: newElement.elementNumber, elementType: newElement.elementType, plant: newElement.plant})) {
+            throw new Meteor.Error('Duplicate error', "O elemento já existe");
+        } else {
+            Elements.insert({
+                elementNumber: newElement.elementNumber,
+                elementType: newElement.elementType,
+                plant: newElement.plant
+            });
+        }
     }
 });
