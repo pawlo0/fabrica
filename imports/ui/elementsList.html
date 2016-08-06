@@ -2,6 +2,29 @@
     <div class="container">
         <h1>Lista de elementos </h1>
         <hr/>
-        <i class="fa fa-plus-circle fa-3x" aria-hidden="true"></i>
+        <i class="fa fa-plus-circle fa-3x js-addElement" aria-hidden="true"></i>
     </div>
+</template>
+
+<template name="addElement">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Adicionar Elemento</h4>
+                </div>
+                {{#autoForm collection=elements id='addElementForm' type='method' meteormethod='insertElement'}}
+                <div class="modal-body">
+                    {{> afQuickField name='elementType'}}
+                    {{> afQuickField name='elementNumber' }}
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>    
 </template>

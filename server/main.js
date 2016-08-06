@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
 import '../imports/api/users.js';
 import {Plants} from '../imports/api/plants.js';
 import {Categories} from '../imports/api/categories.js';
+import {Elements} from '../imports/api/elements.js';
 
 Meteor.startup(() => {
     // Creates first user in case there's no user, with full admin rights
@@ -35,7 +35,7 @@ Meteor.publish('plants', function(){
         }
     }
 });
-/*
+
 Meteor.publish('categories', function(){
     const user = Meteor.users.findOne(this.userId);
     if (user) {
@@ -45,5 +45,4 @@ Meteor.publish('categories', function(){
             return Categories.find({plant: user.profile.plant});
         }
     }
-})
-*/
+});
