@@ -1,6 +1,7 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Tabular } from 'meteor/aldeed:tabular';
+import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 
 import { Plants } from './plants.js';
 
@@ -78,6 +79,19 @@ export const insertCategory = new ValidatedMethod({
             plant,
             type
         });
+    }
+});
+
+export const updateCategory = new ValidatedMethod({
+    name: 'updateCategory',
+    validate(obj){
+        schema.validator({modifier: true});
+    },
+    run({_id, modifier}){
+        Categories.update(_id, modifier);
+        if (Meteor.isClient) {
+            Modal.hide('categoryEdit');
+        }
     }
 });
 

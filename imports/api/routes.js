@@ -37,3 +37,4 @@ FlowRouter.route('/elements', {
         BlazeLayout.render("appLayout", {main: "elementsList"});
     }
 });
+

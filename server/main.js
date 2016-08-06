@@ -35,14 +35,15 @@ Meteor.publish('plants', function(){
         }
     }
 });
-
+/*
 Meteor.publish('categories', function(){
     const user = Meteor.users.findOne(this.userId);
-    if (user){
-        if (user.profile.admin){
+    if (user) {
+        if (user.profile.admin) {
             return Categories.find();
         } else {
             return Categories.find({plant: user.profile.plant});
         }
     }
-});
+})
+*/
