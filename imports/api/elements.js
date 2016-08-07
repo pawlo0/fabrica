@@ -5,6 +5,10 @@ import { Tabular } from 'meteor/aldeed:tabular';
 import { Categories } from '../api/categories.js';
 import { Plants } from './plants.js';
 
+// Need this to render the button on the tabular
+if (Meteor.isClient){
+    require("../ui/elementsList.html");
+}
 export const Elements = new Mongo.Collection('elements');
 
 const schema = new SimpleSchema({
@@ -178,11 +182,7 @@ export const insertElement = new ValidatedMethod({
         if (Elements.findOne({elementNumber: newElement.elementNumber, elementType: newElement.elementType, plant: newElement.plant})) {
             throw new Meteor.Error('Duplicate error', "O elemento já existe");
         } else {
-            Elements.insert({
-                elementNumber: newElement.elementNumber,
-                elementType: newElement.elementType,
-                plant: newElement.plant
-            });
+            Elements.insert(newElement);
         }
     }
 });
@@ -225,7 +225,11 @@ TabularTables.Elements= new Tabular.Table({
             render: function(val, type, doc) {
                 return Categories.findOne(doc.elementType).categoryName;
             }
-        }
+        },
+        { data: 'manufacturer', title: 'Marca'},
+        { data: 'model', title: 'Modelo'},
+        { data: 'location', title: 'Localização'},
+        { tmpl: Meteor.isClient && Template.elementDetailsButton }
     ],
     responsive: true,
     autoWidth: false,
