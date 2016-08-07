@@ -51,7 +51,102 @@ const schema = new SimpleSchema({
     		}
     	}          
     },
-    
+    frequencyMonths: {
+        type: Number,
+        label: "Periodicidade (Meses)"
+    },
+    frequencyHours: {
+        type: Number,
+        label: "Periodicidade (Horas trabalho)",
+        optional: true
+    },
+    manufacturer: {
+        type: String,
+        label: "Marca"
+    },
+    model: {
+        type: String,
+        label: "Modelo"
+    },
+    serialNumber: {
+        type: String,
+        label: "Número de série"
+    },
+    location: {
+        type: String,
+        label: "Localização",
+        optional: true
+    },
+    purchasingDate: {
+        type: Date,
+        label: "Data de Compra",
+        optional: true
+    },
+    capacity: {
+        type: String,
+        label: "Capacidade / Potência",
+        optional: true
+    },
+    use: {
+        type: String,
+        label: "Função",
+        optional: true
+    },
+    bottomLimit: {
+        type: String,
+        label: "Limite Inferior",
+        optional: true
+    },
+    precisionClass: {
+        type: String,
+        label: "Classe de precisão",
+        optional: true
+    },
+    rangeMeasure: {
+        type: String,
+        label: "Gama de medida",
+        optional: true
+    },
+    rangeUse: {
+        type: String,
+        label: "Gama de uso",
+        optional: true
+    },
+    resolution: {
+        type: String,
+        label: "Resolução",
+        optional: true
+    },
+    scale: {
+        type: String,
+        label: "Escala",
+        optional: true
+    },
+    units: {
+        type: String,
+        label: "Unidades",
+        optional: true
+    },
+    isDigital: {
+        type: Boolean,
+        label: "Digital?",
+        defaultValue: false
+    },
+    noConform: {
+        type: String,
+        label: "Critério Não conformidade",
+        optional: true
+    },
+    noConformValue: {
+        type: Number,
+        label: "Valor Não conformidade",
+        optional: true
+    },
+    setPoint: {
+        type: Number,
+        label: "Disparo / Setpoint",
+        optional: true
+    }
 });
 
 Elements.attachSchema(schema);

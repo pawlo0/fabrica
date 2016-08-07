@@ -19,8 +19,68 @@
                     {{#if duplicateAlert}}
                         <div class="alert alert-warning" role="alert">Atenção, o elemento com esse número já existe!</div>
                     {{/if}}
-                    {{> afQuickField name='elementType'}}
-                    {{> afQuickField name='elementNumber' }}
+                    <div class="row">
+                        {{> afQuickField name='elementType' formgroup-class="col-xs-8"}}
+                        {{> afQuickField name='elementNumber' formgroup-class="col-xs-4"}}
+                    </div>
+                    <div class="row">
+                        {{> afQuickField name='manufacturer' formgroup-class='col-xs-4'}}
+                        {{> afQuickField name='model' formgroup-class='col-xs-4'}}
+                        {{> afQuickField name='serialNumber' formgroup-class='col-xs-4'}}
+                    </div>
+                    {{#if addElementFormType.hasCalibration }}
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{> afQuickField name='frequencyMonths' label='Freq. Calibração' placeholder='(Meses)'}}
+                                {{> afQuickField name='bottomLimit'}}
+                                {{> afQuickField name='precisionClass'}}
+                                {{> afQuickField name='rangeMeasure'}}
+                                {{> afQuickField name='rangeUse'}}
+                                {{> afQuickField name='scale' }}
+                                {{> afQuickField name='resolution'}}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='location'}}
+                                {{> afQuickField name='use'}}
+                                {{> afQuickField name='noConform'}}
+                                {{> afQuickField name='noConformValue' placeholder='Numero'}}
+                                {{> afQuickField name='purchasingDate' }}
+                                {{> afQuickField name='units' }}
+                                {{> afQuickField name='isDigital' }}
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if addElementFormType.hasSetpoint}}
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{> afQuickField name='frequencyMonths' label='Freq. Verificação' placeholder='(Meses)'}}
+                                {{> afQuickField name='rangeMeasure'}}
+                                {{> afQuickField name='setPoint' placeholder='Numero'}}
+                                {{> afQuickField name='noConformValue' placeholder='Percentagem permitida'}}
+                                {{> afQuickField name='purchasingDate' }}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='location'}}
+                                {{> afQuickField name='use'}}
+                                {{> afQuickField name='units' }}
+                                {{> afQuickField name='noConform'}}
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if addElementFormType.hasMaintenance }}
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{> afQuickField name='frequencyMonths' label='Freq. Revisão' placeholder='(Meses)'}}
+                                {{> afQuickField name='frequencyHours' label='Freq. Revisão' placeholder='(Horas)'}}
+                                {{> afQuickField name='purchasingDate' }}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='use'}}
+                                {{> afQuickField name='location'}}
+                                {{> afQuickField name='capacity' }}
+                            </div>
+                        </div>
+                    {{/if}}
                 </div>
             
                 <div class="modal-footer">
