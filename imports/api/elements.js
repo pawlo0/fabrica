@@ -206,6 +206,21 @@ export const insertElement = new ValidatedMethod({
     }
 });
 
+// Method to update elements
+export const updateElement = new ValidatedMethod({
+    name: 'updateElement',
+    validate(obj){
+        schema.validator({modifier: true});
+    },
+    run({_id, modifier}){
+        
+        if (Elements.findOne(_id).elementNumber != modifier.$set.elementNumber && Elements.findOne({elementNumber: modifier.$set.elementNumber, elementType: modifier.$set.elementType, plant: modifier.$set.plant})) {
+            throw new Meteor.Error('Duplicate error', "O elemento já existe");
+        } else {        
+            Elements.update(_id, modifier);
+        }
+    }
+});
 
 // Code for the elements table
 export const TabularTables = {};

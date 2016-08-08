@@ -3,6 +3,26 @@
         {{#if Template.subscriptionsReady}}
             {{#with element}}
             <div class="row">
+                <div class="col-xs-2">
+                    <a href="/elements" class="btn btn-default"><i class="fa fa-chevron-left" aria-hidden="true"></i> Voltar</a>
+                </div>
+                <div class="col-xs-10">
+                    <span class="pull-right">
+                        <button class="btn btn-primary js-showEditElementModal">Editar</button>
+                        {{#if formType.hasCalibration }}
+                            <button class="btn btn-success js-addCalibrationModal">Calibração</button>
+                        {{/if}}
+                        {{#if formType.hasSetpoint }}
+                            <button class="btn btn-success js-addVerificationModal">Verificação</button>
+                        {{/if}}
+                        {{#if formType.hasMaintenance }}
+                            <button class="btn btn-success js-addMaintenanceModal">Manutenção</button>
+                        {{/if}}
+                    </span>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
                 <div class="col-md-6">
                     <table class="table table-bordered">
                         <tbody>
@@ -10,11 +30,11 @@
                             <tr><td>Tipo:</td><td>{{elementType}}</td></tr>
                             <tr><td>Marca:</td><td>{{manufacturer}}</td></tr>
                             <tr><td>Modelo:</td><td>{{model}}</td></tr>
+                            <tr><td>Número Série:</td><td>{{serialNumber}}</td></tr>
                             <tr><td>Localização:</td><td>{{location}}</td></tr>
                             <tr><td>Uso:</td><td>{{use}}</td></tr>
                             <tr><td>Data de compra:</td><td>{{purchasingDate}}</td></tr>
                             {{#if formType.hasCalibration }}
-                                
                                 <tr><td>Limite Inferior:</td><td>{{bottomLimit}}</td></tr>
                                 <tr><td>Classe de precisão:</td><td>{{precisionClass}}</td></tr>
                                 <tr><td>Gama de medida:</td><td>{{rangeMeasure}}</td></tr>
@@ -27,7 +47,6 @@
                                 <tr><td>Digital:</td><td>{{isDigitalTranslated}}</td></tr>
                             {{/if}}
                             {{#if formType.hasSetpoint }}
-                                
                                 <tr><td>Disparo / Setpoint:</td><td>{{setPoint}}</td></tr>
                                 <tr><td>Gama de medida:</td><td>{{rangeMeasure}}</td></tr>
                                 <tr><td>Unidades:</td><td>{{units}}</td></tr>
@@ -35,7 +54,6 @@
                                 <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>                                
                             {{/if}}
                             {{#if formType.hasMaintenance }}
-                                
                                 <tr><td>Capacidade:</td><td>{{capacity}}</td></tr>
                             {{/if}}
                         </tbody>
@@ -62,5 +80,95 @@
         {{else}}
             <p>Loading...</p>
         {{/if}}
+    </div>
+</template>
+
+<template name="editElementModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Elemento</h4>
+                </div>
+                {{#autoForm collection=elements id='editElementForm' type='method-update' meteormethod='updateElement' doc=this singleMethodArgument=true}}
+                <div class="modal-body">
+                    {{#if duplicateAlert}}
+                        <div class="alert alert-warning" role="alert">Atenção, o elemento com esse número já existe!</div>
+                    {{/if}}
+                    <div class="row">
+                        {{> afQuickField name='elementType' formgroup-class="col-xs-7"}}
+                        <div class="form-group col-xs-1">
+                            <label class="control-label"></label>
+                            <p class="form-control-static"><strong>{{ addElementFormType.initials }}</strong></p>
+                        </div>
+                        {{> afQuickField name='elementNumber' formgroup-class='col-xs-3'}}
+                    </div>
+                    <div class="row">
+                        {{> afQuickField name='manufacturer' formgroup-class='col-xs-4'}}
+                        {{> afQuickField name='model' formgroup-class='col-xs-4'}}
+                        {{> afQuickField name='serialNumber' formgroup-class='col-xs-4'}}
+                    </div>
+                    {{#if formType.hasCalibration }}
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{> afQuickField name='frequencyMonths' label='Freq. Calibração' placeholder='(Meses)'}}
+                                {{> afQuickField name='bottomLimit'}}
+                                {{> afQuickField name='precisionClass'}}
+                                {{> afQuickField name='rangeMeasure'}}
+                                {{> afQuickField name='rangeUse'}}
+                                {{> afQuickField name='scale' }}
+                                {{> afQuickField name='resolution'}}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='location'}}
+                                {{> afQuickField name='use'}}
+                                {{> afQuickField name='noConform'}}
+                                {{> afQuickField name='noConformValue' placeholder='Numero'}}
+                                {{> afQuickField name='purchasingDate' }}
+                                {{> afQuickField name='units' }}
+                                {{> afQuickField name='isDigital' }}
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if formType.hasSetpoint}}
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{> afQuickField name='frequencyMonths' label='Freq. Verificação' placeholder='(Meses)'}}
+                                {{> afQuickField name='rangeMeasure'}}
+                                {{> afQuickField name='setPoint' placeholder='Numero'}}
+                                {{> afQuickField name='noConformValue' placeholder='Percentagem permitida'}}
+                                {{> afQuickField name='purchasingDate' }}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='location'}}
+                                {{> afQuickField name='use'}}
+                                {{> afQuickField name='units' }}
+                                {{> afQuickField name='noConform'}}
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if formType.hasMaintenance }}
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{> afQuickField name='frequencyMonths' label='Freq. Revisão' placeholder='(Meses)'}}
+                                {{> afQuickField name='frequencyHours' label='Freq. Revisão' placeholder='(Horas)'}}
+                                {{> afQuickField name='purchasingDate' }}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='use'}}
+                                {{> afQuickField name='location'}}
+                                {{> afQuickField name='capacity' }}
+                            </div>
+                        </div>
+                    {{/if}}
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+                {{/autoForm}}
+            </div>
+        </div>
     </div>
 </template>
