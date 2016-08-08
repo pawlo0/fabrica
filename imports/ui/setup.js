@@ -1,6 +1,7 @@
 import { Plants } from '../api/plants.js';
 import { Categories } from '../api/categories.js';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
+import { AutoForm } from 'meteor/aldeed:autoform';
 import { $ } from 'meteor/jquery';
 import './setup.html';
 
@@ -28,6 +29,9 @@ Template.setup.helpers({
     },
     'categories'(){
         return Categories;
+    },
+    'duplicateAlert'(){
+        return Session.get('duplicateAlert');
     }
 });
 
@@ -49,5 +53,42 @@ Template.setup.events({
 Template.categoryEdit.helpers({
     'categories'(){
         return Categories;
+    },
+    'duplicateAlert'(){
+        return Session.get('duplicateAlert');
     }
-})
+});
+
+Template.categoryEdit.events({
+    'click .js-eraseDuplicateAlert'(event){
+        Session.set('duplicateAlert', false);
+    }
+});
+
+AutoForm.hooks({
+    newCategoryForm: {
+        onSuccess: function(formType, result) {
+            Session.set('duplicateAlert', false);
+        },
+        onError: function(formType, error) {
+            if (error.error === 'Duplicate error') {
+                Session.set('duplicateAlert', true);
+            } else {
+                console.log(error);
+            }
+        },
+    },
+    editCategoryForm: {
+        onSuccess: function(formType, result) {
+            Session.set('duplicateAlert', false);
+            Modal.hide('categoryEdit');
+        },
+        onError: function(formType, error) {
+            if (error.error === 'Duplicate error') {
+                Session.set('duplicateAlert', true);
+            } else {
+                console.log(error);
+            }
+        }        
+    }
+});

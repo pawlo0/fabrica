@@ -61,6 +61,15 @@ const schema = new SimpleSchema({
 
 Categories.attachSchema(schema);
 
+// This is the way to ensure the uniqueness of categories initials.
+if (Meteor.isServer) {
+  Categories._ensureIndex(
+    {initials: 1, plant: 1},
+    { unique: true }
+  );
+}
+
+
 export const insertCategory = new ValidatedMethod({
     name: 'insertCategory',
     validate(obj){
@@ -73,12 +82,18 @@ export const insertCategory = new ValidatedMethod({
         if (!user.profile.admin) {
             plant = user.profile.plant;
         }
-        Categories.insert({
-            categoryName,
-            initials,
-            plant,
-            type
-        });
+        
+        // Prevent from inserting duplicates
+        if (Categories.findOne({initials, plant})) {
+            throw new Meteor.Error('Duplicate error', "A categoria já existe");
+        } else {
+            Categories.insert({
+                categoryName,
+                initials,
+                plant,
+                type
+            });
+        }
     }
 });
 
@@ -88,9 +103,10 @@ export const updateCategory = new ValidatedMethod({
         schema.validator({modifier: true});
     },
     run({_id, modifier}){
-        Categories.update(_id, modifier);
-        if (Meteor.isClient) {
-            Modal.hide('categoryEdit');
+        if (Categories.findOne({initials: modifier.$set.initials, plant: modifier.$set.plant})) {
+            throw new Meteor.Error('Duplicate error', "A categoria já existe");
+        } else {        
+            Categories.update(_id, modifier);
         }
     }
 });
