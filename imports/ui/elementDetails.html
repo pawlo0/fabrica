@@ -1,0 +1,11 @@
+<template name="elementDetails">
+    <div class="container">
+        {{#if Template.subscriptionsReady}}
+            {{#with element}}
+                <h3>{{elementId}}</h3>
+            {{/with}}
+        {{else}}
+            <p>Loading...</p>
+        {{/if}}
+    </div>
+</template>

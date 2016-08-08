@@ -5,6 +5,7 @@ import '../ui/appLayout.js';
 import '../ui/welcome.js';
 import '../ui/setup.js';
 import '../ui/elementsList.js';
+import '../ui/elementDetails.js';
 
 
 FlowRouter.route('/', {
@@ -38,3 +39,14 @@ FlowRouter.route('/elements', {
     }
 });
 
+FlowRouter.route('/elements/:Id', {
+   name: 'elementDetails',
+    triggersEnter: function() {
+        if (!(Meteor.user() || Meteor.loggingIn())) {
+            FlowRouter.go('/');
+        }        
+    },
+    action: function(params) {
+        BlazeLayout.render('appLayout', {main: 'elementDetails'});
+    }
+});

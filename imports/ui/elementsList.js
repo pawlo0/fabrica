@@ -60,6 +60,12 @@ Template.addElement.events({
     }
 });
 
+Template.elementDetailsButton.helpers({
+    'linkToElement'(){
+        return '/elements/'+this._id;
+    }
+});
+
 
 AutoForm.hooks({
     addElementForm: {
