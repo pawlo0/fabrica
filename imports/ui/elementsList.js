@@ -40,20 +40,22 @@ Template.addElement.helpers({
 
 Template.addElement.events({
     'change select[name="elementType"]'(event, template){
+        const category = Categories.findOne({categoryName: event.target.value, plant: Meteor.user().profile.plant});
+        
         // This is to give a default element number
         // The user can change it tough.
         for (var number = 1; number < 9999; number++){
-            if (Elements.findOne({elementType: event.target.value, elementNumber: number})){
+            if (Elements.findOne({elementType: category.categoryName, elementNumber: number})){
                 continue;
             } else {
                 $('input[name="elementNumber"]').val(number);
                 break;
             }
         }
-        
         // This is to change the form as the user chooses diferent types of elements
         let formType = {};
-        formType[Categories.findOne(event.target.value).type] = true;
+        formType[category.type] = true;
+        formType['initials'] = category.initials;
         template.addElementFormType.set(formType);
     }
 });

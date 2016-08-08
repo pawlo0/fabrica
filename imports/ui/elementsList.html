@@ -3,6 +3,7 @@
         <h1>Lista de elementos </h1>
         <hr/>
         <i class="fa fa-plus-circle fa-3x js-addElement" aria-hidden="true"></i>
+        <hr/>
         {{> tabular table=TabularTables.Elements id="elementsTabular" class="table table-striped table-bordered table-condensed"}}
     </div>
 </template>
@@ -20,8 +21,12 @@
                         <div class="alert alert-warning" role="alert">Atenção, o elemento com esse número já existe!</div>
                     {{/if}}
                     <div class="row">
-                        {{> afQuickField name='elementType' formgroup-class="col-xs-8"}}
-                        {{> afQuickField name='elementNumber' formgroup-class="col-xs-4"}}
+                        {{> afQuickField name='elementType' formgroup-class="col-xs-7"}}
+                        <div class="form-group col-xs-1">
+                            <label class="control-label"></label>
+                            <p class="form-control-static"><strong>{{ addElementFormType.initials }}</strong></p>
+                        </div>
+                        {{> afQuickField name='elementNumber' formgroup-class='col-xs-3'}}
                     </div>
                     <div class="row">
                         {{> afQuickField name='manufacturer' formgroup-class='col-xs-4'}}
@@ -95,7 +100,6 @@
 
 <template name="elementDetailsButton">
     <div class="text-center">
-    <button type="button" class="btn btn-primary btn-xs">Detalhes</button>
-        
+        <button type="button" class="btn btn-primary btn-xs"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
     </div>
 </template>

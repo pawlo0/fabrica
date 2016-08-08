@@ -14,7 +14,7 @@ export const Elements = new Mongo.Collection('elements');
 const schema = new SimpleSchema({
     elementNumber: {
         type: Number,
-        max: 20,
+        max: 9999,
         label: 'Numero'
     },
     elementType: {
@@ -25,9 +25,22 @@ const schema = new SimpleSchema({
             options: function(){
                 const user = Meteor.user();
                 return Categories.find({plant: user.profile.plant}).map(function(obj){
-                    return {label: obj.categoryName, value: obj._id};
+                    return {label: obj.categoryName, value: obj.categoryName};
                 });
             }
+        }
+    },
+    elementId: {
+        type: String,
+        max: 8,
+        autoValue: function(){
+            const initials = Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials;
+            let number = this.field('elementNumber').value < 10 ? 
+                '00' + this.field('elementNumber').value :
+                number = this.field('elementNumber').value < 100 ? 
+                    '0' + this.field('elementNumber').value :
+                    this.field('elementNumber').value;
+            return initials + '-' + number;
         }
     },
     plant: {
@@ -206,31 +219,14 @@ TabularTables.Elements= new Tabular.Table({
         }
     },
     columns: [
-        { 
-            data: 'elementNumber', 
-            title: 'Número',
-            render: function(val, type, doc) {
-                const elementInitials = Categories.findOne(doc.elementType).initials;
-                if (val < 10 ) {
-                    val = '00' + val;
-                } else if (val < 100 ){
-                    val = '0' + val;
-                }
-                return elementInitials + '-' + val;
-            }
-        },
-        { 
-            data: 'elementType', 
-            title: 'Tipo',
-            render: function(val, type, doc) {
-                return Categories.findOne(doc.elementType).categoryName;
-            }
-        },
+        { data: 'elementId', title: 'Número' },
+        { data: 'elementType', title: 'Tipo' },
         { data: 'manufacturer', title: 'Marca'},
         { data: 'model', title: 'Modelo'},
         { data: 'location', title: 'Localização'},
         { tmpl: Meteor.isClient && Template.elementDetailsButton }
     ],
+    extraFields: ['elementNumber'],
     responsive: true,
     autoWidth: false,
     order: [[1, 'asc'], [0,'asc']]
