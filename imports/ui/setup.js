@@ -1,8 +1,12 @@
 import { Plants } from '../api/plants.js';
-import { Categories } from '../api/categories.js';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { $ } from 'meteor/jquery';
+
+import { deleteCategory } from '../api/categories.js';
+
+import { Categories } from '../api/categories.js';
+import { Elements } from '../api/elements.js';
+
 import './setup.html';
 
 Template.setup.onCreated(function() {
@@ -10,6 +14,7 @@ Template.setup.onCreated(function() {
     self.autorun(function() {
         self.subscribe('plants');
         self.subscribe('categories');
+        self.subscribe('elements');
     });
 });
 
@@ -38,14 +43,6 @@ Template.setup.helpers({
 Template.setup.events({
     'keyup .js-toUpperCase'(event){
         event.currentTarget.value = event.currentTarget.value.toUpperCase(); 
-    },
-    'dblclick #categoriesTabular tbody > tr': function (event) {
-        var dataTable = $(event.target).closest('table').DataTable();
-        var rowData = dataTable.row(event.currentTarget).data();
-        if (!rowData) return; // Won't be data if a placeholder row is clicked
-        Modal.show('categoryEdit', ()=>{
-            return Categories.findOne(rowData._id);
-        });
     }
 });
 
@@ -56,6 +53,12 @@ Template.categoryEdit.helpers({
     },
     'duplicateAlert'(){
         return Session.get('duplicateAlert');
+    },
+    'noElementsOfThisCategory'(){
+        // Could write this helper simpler but wrote this way to avoid console error when deleting category
+        if (Template.currentData() && Elements.find({plant: Template.currentData().plant, elementType: Template.currentData().categoryName}).count() === 0) {
+            return true;
+        }
     }
 });
 
@@ -65,7 +68,19 @@ Template.categoryEdit.events({
     },
     'keyup .js-toUpperCase'(event){
         event.currentTarget.value = event.currentTarget.value.toUpperCase(); 
-    },    
+    },
+    'click .js-deleteCategory'(event){
+        deleteCategory.call(this._id);
+        Modal.hide('categoryEdit');
+    }
+});
+
+Template.categoryDetailsButton.events({
+    'click .js-showCategoryEdittModal'(event){
+        Modal.show('categoryEdit', ()=>{
+            return Categories.findOne(this._id);
+        });
+    }
 });
 
 AutoForm.hooks({

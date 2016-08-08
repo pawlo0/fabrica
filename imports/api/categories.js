@@ -1,10 +1,14 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Tabular } from 'meteor/aldeed:tabular';
-import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 
 import { Plants } from './plants.js';
 import { Elements } from './elements.js';
+
+// Need this to render the button on the tabular
+if (Meteor.isClient){
+    require("../ui/setup.html");
+}
 
 export const Categories = new Mongo.Collection('categories');
 
@@ -125,6 +129,17 @@ export const updateCategory = new ValidatedMethod({
     }
 });
 
+// Method to delete category
+export const deleteCategory = new ValidatedMethod({
+    name: 'deleteCategory',
+    validate: null,
+    run(categoryId){
+        const category = Categories.findOne(categoryId);
+        if (Elements.find({plant: category.plant, elementType: category.categoryName}).count() === 0) {
+            Categories.remove(categoryId);
+        }
+    }
+});
 
 
 // Code for the table of categories, 
@@ -163,7 +178,8 @@ TabularTables.Categories= new Tabular.Table({
                 }
             }            
         },
-        {data: 'plant', title: 'Fábrica'}
+        {data: 'plant', title: 'Fábrica'},
+        { tmpl: Meteor.isClient && Template.categoryDetailsButton }
     ],
     responsive: true,
     autoWidth: false,

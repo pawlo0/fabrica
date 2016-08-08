@@ -47,6 +47,17 @@ Meteor.publish('categories', function(){
     }
 });
 
+Meteor.publish('elements', function(Id){
+    const user = Meteor.users.findOne(this.userId);
+    if (user) {
+        if (user.profile.admin) {
+            return Elements.find();
+        } else {
+            return Elements.find({plant: user.profile.plant});
+        }
+    }
+});
+
 Meteor.publish('singleElement', function(Id){
     const user = Meteor.users.findOne(this.userId);
     const element = Elements.findOne(Id);

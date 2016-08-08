@@ -77,15 +77,26 @@
                 <div class="modal-body">
                         {{> afQuickField name="categoryName"}}
                         {{> afQuickField name='initials' class="js-toUpperCase"}}
-                        {{> afQuickField name='type'}}
+                        {{#if noElementsOfThisCategory}}
+                            {{> afQuickField name='type'}}
+                        {{/if}}
                 </div>
             
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default js-eraseDuplicateAlert" data-dismiss="modal">Close</button>
+                    {{#if noElementsOfThisCategory}}
+                        <button type="button" class="btn btn-danger js-deleteCategory" data-dismiss="modal">Apagar Tipo de Elemento</button>
+                    {{/if}}
+                    <button type="button" class="btn btn-default js-eraseDuplicateAlert" data-dismiss="modal">Fechar</button>
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
                 {{/autoForm}}
             </div>
         </div>
     </div>
+</template>
+
+<template name="categoryDetailsButton">
+    <div class="text-center">
+        <button class="btn btn-primary btn-xs js-showCategoryEdittModal"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
+    </div>    
 </template>
