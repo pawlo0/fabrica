@@ -37,7 +37,9 @@ const schema = new SimpleSchema({
             if (this.isFromTrustedCode) {
                 return undefined;
             } else {
-                const initials = Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials;
+                let initials = this.isInsert ? 
+                    Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials : 
+                    Elements.findOne(this.docId).elementId.split('-')[0];
                 let number = this.field('elementNumber').value < 10 ? 
                     '00' + this.field('elementNumber').value :
                     number = this.field('elementNumber').value < 100 ? 
@@ -50,7 +52,11 @@ const schema = new SimpleSchema({
     elementFormType: {
         type: String,
         autoValue: function(){
-            return Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).type;
+            if (this.isInsert) {
+                return Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).type;
+            } else {
+                this.unset();
+            }
         }
     },
     plant: {

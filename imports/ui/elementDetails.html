@@ -96,10 +96,10 @@
                         <div class="alert alert-warning" role="alert">Atenção, o elemento com esse número já existe!</div>
                     {{/if}}
                     <div class="row">
-                        {{> afQuickField name='elementType' formgroup-class="col-xs-7"}}
+                        {{> afQuickField name='elementType' formgroup-class="col-xs-7" disabled='true'}}
                         <div class="form-group col-xs-1">
                             <label class="control-label"></label>
-                            <p class="form-control-static"><strong>{{ addElementFormType.initials }}</strong></p>
+                            <p class="form-control-static"><strong>{{ elementInitials }}</strong></p>
                         </div>
                         {{> afQuickField name='elementNumber' formgroup-class='col-xs-3'}}
                     </div>

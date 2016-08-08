@@ -54,6 +54,9 @@ Template.editElementModal.helpers({
         formType[Template.currentData().elementFormType] = true;
         return formType;
     },
+    'elementInitials'(){
+        return this.elementId.split('-')[0];
+    }
 });
 
 AutoForm.hooks({
