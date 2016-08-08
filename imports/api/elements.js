@@ -43,6 +43,12 @@ const schema = new SimpleSchema({
             return initials + '-' + number;
         }
     },
+    elementFormType: {
+        type: String,
+        autoValue: function(){
+            return Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).type;
+        }
+    },
     plant: {
         type: String,
         label: "Fábrica",

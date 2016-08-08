@@ -2,7 +2,62 @@
     <div class="container">
         {{#if Template.subscriptionsReady}}
             {{#with element}}
-                <h3>{{elementId}}</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr><td>Numero:</td><td><strong>{{elementId}}</strong></td></tr>
+                            <tr><td>Tipo:</td><td>{{elementType}}</td></tr>
+                            <tr><td>Marca:</td><td>{{manufacturer}}</td></tr>
+                            <tr><td>Modelo:</td><td>{{model}}</td></tr>
+                            <tr><td>Localização:</td><td>{{location}}</td></tr>
+                            <tr><td>Uso:</td><td>{{use}}</td></tr>
+                            <tr><td>Data de compra:</td><td>{{purchasingDate}}</td></tr>
+                            {{#if formType.hasCalibration }}
+                                
+                                <tr><td>Limite Inferior:</td><td>{{bottomLimit}}</td></tr>
+                                <tr><td>Classe de precisão:</td><td>{{precisionClass}}</td></tr>
+                                <tr><td>Gama de medida:</td><td>{{rangeMeasure}}</td></tr>
+                                <tr><td>Gama de uso:</td><td>{{rangeUse}}</td></tr>
+                                <tr><td>Escala:</td><td>{{scale}}</td></tr>
+                                <tr><td>Resolução:</td><td>{{resolution}}</td></tr>
+                                <tr><td>Unidades:</td><td>{{units}}</td></tr>
+                                <tr><td>Critério de Não Conformidade:</td><td>{{noConform}}</td></tr>
+                                <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>
+                                <tr><td>Digital:</td><td>{{isDigitalTranslated}}</td></tr>
+                            {{/if}}
+                            {{#if formType.hasSetpoint }}
+                                
+                                <tr><td>Disparo / Setpoint:</td><td>{{setPoint}}</td></tr>
+                                <tr><td>Gama de medida:</td><td>{{rangeMeasure}}</td></tr>
+                                <tr><td>Unidades:</td><td>{{units}}</td></tr>
+                                <tr><td>Critério de Não Conformidade:</td><td>{{noConform}}</td></tr>
+                                <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>                                
+                            {{/if}}
+                            {{#if formType.hasMaintenance }}
+                                
+                                <tr><td>Capacidade:</td><td>{{capacity}}</td></tr>
+                            {{/if}}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tbody>
+                            {{#if formType.hasCalibration }}
+                                <tr><td>Frequência Calibração:</td><td>{{frequencyMonths}} Meses</td></tr>
+                            {{/if}}
+                            {{#if formType.hasSetpoint }}
+                                <tr><td>Frequência Verificação:</td><td>{{frequencyMonths}} Meses</td></tr>
+                            {{/if}}
+                            {{#if formType.hasMaintenance }}
+                                <tr><td>Frequência Manutenção (Meses):</td><td>{{frequencyMonths}} Meses</td></tr>
+                                <tr><td>Frequência Manutenção (Horas):</td><td>{{frequencyHours}} Horas</td></tr>
+                            {{/if}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             {{/with}}
         {{else}}
             <p>Loading...</p>
