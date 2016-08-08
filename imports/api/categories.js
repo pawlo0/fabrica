@@ -4,6 +4,7 @@ import { Tabular } from 'meteor/aldeed:tabular';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 
 import { Plants } from './plants.js';
+import { Elements } from './elements.js';
 
 export const Categories = new Mongo.Collection('categories');
 
@@ -103,10 +104,23 @@ export const updateCategory = new ValidatedMethod({
         schema.validator({modifier: true});
     },
     run({_id, modifier}){
-        if (Categories.findOne({initials: modifier.$set.initials, plant: modifier.$set.plant})) {
+        const oldCategory = Categories.findOne(_id);
+        if (oldCategory.initials != modifier.$set.initials && Categories.findOne({initials: modifier.$set.initials, plant: modifier.$set.plant})) {
             throw new Meteor.Error('Duplicate error', "A categoria já existe");
-        } else {        
+        } else {
+            
+            // This is to change all elements of this category 
+            Elements.find({plant: oldCategory.plant, elementType: oldCategory.categoryName}).map(function(element){
+                const newElementId = modifier.$set.initials + '-' + element.elementId.split('-')[1];
+                Elements.update(element._id, {$set: {
+                    elementType: modifier.$set.categoryName, 
+                    elementId: newElementId,
+                    elementFormType: modifier.$set.type
+                }});
+            });
+            // And this is to change the category itself.
             Categories.update(_id, modifier);
+            
         }
     }
 });

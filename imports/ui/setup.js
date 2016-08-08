@@ -62,7 +62,10 @@ Template.categoryEdit.helpers({
 Template.categoryEdit.events({
     'click .js-eraseDuplicateAlert'(event){
         Session.set('duplicateAlert', false);
-    }
+    },
+    'keyup .js-toUpperCase'(event){
+        event.currentTarget.value = event.currentTarget.value.toUpperCase(); 
+    },    
 });
 
 AutoForm.hooks({

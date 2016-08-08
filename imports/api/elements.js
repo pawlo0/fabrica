@@ -34,13 +34,17 @@ const schema = new SimpleSchema({
         type: String,
         max: 8,
         autoValue: function(){
-            const initials = Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials;
-            let number = this.field('elementNumber').value < 10 ? 
-                '00' + this.field('elementNumber').value :
-                number = this.field('elementNumber').value < 100 ? 
-                    '0' + this.field('elementNumber').value :
-                    this.field('elementNumber').value;
-            return initials + '-' + number;
+            if (this.isFromTrustedCode) {
+                return undefined;
+            } else {
+                const initials = Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials;
+                let number = this.field('elementNumber').value < 10 ? 
+                    '00' + this.field('elementNumber').value :
+                    number = this.field('elementNumber').value < 100 ? 
+                        '0' + this.field('elementNumber').value :
+                        this.field('elementNumber').value;
+                return initials + '-' + number;
+            }
         }
     },
     elementFormType: {
