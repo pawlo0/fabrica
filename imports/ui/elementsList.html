@@ -3,6 +3,9 @@
         <h1>Lista de elementos </h1>
         <hr/>
         <i class="fa fa-plus-circle fa-3x js-addElement" aria-hidden="true"></i>
+        <div class="pull-right">
+            <button class="btn btn-default btn-sm js-showImportModal">Importar</button>
+        </div>
         <hr/>
         {{> tabular table=TabularTables.Elements id="elementsTabular" class="table table-striped table-bordered table-condensed"}}
     </div>
@@ -101,5 +104,23 @@
 <template name="elementDetailsButton">
     <div class="text-center">
         <a href={{linkToElement}} class="btn btn-primary btn-xs"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+    </div>
+</template>
+
+<template name="importElementsModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Importar Elementos</h4>
+                </div>
+                <div class="modal-body">
+                    <a href="#" class="js-downloadHasMaintenance">Descarregar ficheiro modelo para tipos de elementos com <strong>Manutenção</strong></a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

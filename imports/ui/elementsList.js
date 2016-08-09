@@ -1,6 +1,8 @@
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { $ } from 'meteor/jquery';
+import { XLSX } from 'meteor/huaming:js-xlsx';
+import { saveAs } from 'meteor/pfafman:filesaver';
 
 import { Elements } from '../api/elements.js';
 import { Categories } from '../api/categories.js';
@@ -18,6 +20,9 @@ Template.elementsList.onCreated(function(){
 Template.elementsList.events({
     'click .js-addElement'(event){
         Modal.show('addElement');
+    },
+    'click .js-showImportModal'(event){
+        Modal.show('importElementsModal');
     }
 });
 
@@ -82,3 +87,52 @@ AutoForm.hooks({
         },
     }
 });
+
+
+
+
+Template.importElementsModal.events({
+    'click .js-downloadHasMaintenance'(event){
+        event.preventDefault();
+            
+        var data = ["Número", "Marca", "Modelo", "Número Série", "Localização", "Data Compra", "Capacidade/Potência", "Função", "Periodicidade (Meses)", "Periodicidade(Horas)", "Contacto Fornecedor", "Consumiveis", "Observações"];
+        writeXLSX(data, "manutenção.xlsx");
+        
+        
+        
+    }
+});
+
+function writeXLSX(data, fileName){
+    var ws= {};
+    for (var i=0; i< data.length; i++) {
+      var cell_ref = XLSX.utils.encode_cell({c:i,r:0});
+      var cell = {v: data[i], t: "s"};
+      ws[cell_ref] = cell;
+    }
+    ws['!ref'] = XLSX.utils.encode_range({s:{c:0, r:0}, e:{c:data.length, r:0}});
+    
+    var ws_name = "SheetJS";
+    var wb = new Workbook(); //, ws = sheet_from_array_of_arrays(data);
+    
+    /* add worksheet to workbook */
+    wb.SheetNames.push(ws_name);
+    wb.Sheets[ws_name] = ws;
+    var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+    
+    /* the saveAs call downloads a file on the local machine */
+    saveAs(new Blob([s2ab(wbout)],{type:""}), fileName);    
+}
+
+function s2ab(s) {
+  var buf = new ArrayBuffer(s.length);
+  var view = new Uint8Array(buf);
+  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+  return buf;
+}
+ 
+function Workbook() {
+	if(!(this instanceof Workbook)) return new Workbook();
+	this.SheetNames = [];
+	this.Sheets = {};
+}
