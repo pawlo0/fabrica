@@ -56,6 +56,7 @@
                                 {{> afQuickField name='units' }}
                                 {{> afQuickField name='isDigital' }}
                             </div>
+                            {{> afQuickField name='memo' formgroup-class='col-xs-12'}}
                         </div>
                     {{/if}}
                     {{#if addElementFormType.hasSetpoint}}
@@ -73,6 +74,7 @@
                                 {{> afQuickField name='units' }}
                                 {{> afQuickField name='noConform'}}
                             </div>
+                            {{> afQuickField name='memo' formgroup-class='col-xs-12'}}
                         </div>
                     {{/if}}
                     {{#if addElementFormType.hasMaintenance }}
@@ -87,6 +89,9 @@
                                 {{> afQuickField name='location'}}
                                 {{> afQuickField name='capacity' }}
                             </div>
+                            {{> afQuickField name='supplier' formgroup-class='col-xs-12'}}
+                            {{> afQuickField name='supplies' formgroup-class='col-xs-12'}}
+                            {{> afQuickField name='memo' formgroup-class='col-xs-12'}}
                         </div>
                     {{/if}}
                 </div>

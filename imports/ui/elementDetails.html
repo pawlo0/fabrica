@@ -45,6 +45,7 @@
                                 <tr><td>Critério de Não Conformidade:</td><td>{{noConform}}</td></tr>
                                 <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>
                                 <tr><td>Digital:</td><td>{{isDigitalTranslated}}</td></tr>
+                                <tr><td>OBS: {{memo}}</td></tr>
                             {{/if}}
                             {{#if formType.hasSetpoint }}
                                 <tr><td>Disparo / Setpoint:</td><td>{{setPoint}}</td></tr>
@@ -52,9 +53,13 @@
                                 <tr><td>Unidades:</td><td>{{units}}</td></tr>
                                 <tr><td>Critério de Não Conformidade:</td><td>{{noConform}}</td></tr>
                                 <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>                                
+                                <tr><td>OBS: {{memo}}</td></tr>
                             {{/if}}
                             {{#if formType.hasMaintenance }}
                                 <tr><td>Capacidade:</td><td>{{capacity}}</td></tr>
+                                <tr><td>Fornecedor:</td><td>{{supplier}}</td></tr>
+                                <tr><td>Consumíveis:</td><td>{{supplies}}</td></tr>
+                                <tr><td>OBS: {{memo}}</td></tr>
                             {{/if}}
                         </tbody>
                     </table>

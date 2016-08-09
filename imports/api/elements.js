@@ -139,6 +139,16 @@ const schema = new SimpleSchema({
         label: "Função",
         optional: true
     },
+    supplier: {
+        type: String,
+        label: "Fornecedor",
+        optional: true
+    },
+    supplies: {
+        type: String,
+        label: "Consumiveis",
+        optional: true
+    },
     bottomLimit: {
         type: String,
         label: "Limite Inferior",
@@ -192,6 +202,11 @@ const schema = new SimpleSchema({
     setPoint: {
         type: Number,
         label: "Disparo / Setpoint",
+        optional: true
+    },
+    memo: {
+        type: String,
+        label: "Observações",
         optional: true
     }
 });
