@@ -164,7 +164,10 @@
                 </div>
             
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    {{#if manager}}
+                        <button type="button" class="btn btn-danger js-removeElement" data-dismiss="modal">Eliminar Elemento</button>
+                    {{/if}}
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
                 {{/autoForm}}

@@ -2,6 +2,8 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import { AutoForm } from 'meteor/aldeed:autoform';
 
+import { removeElement } from '../api/elements.js';
+
 import { Elements } from '../api/elements.js';
 import { Categories } from '../api/categories.js';
 
@@ -51,11 +53,31 @@ Template.editElementModal.helpers({
     },
     'formType'() {
         let formType = {};
-        formType[Template.currentData().elementFormType] = true;
-        return formType;
+        // Need this 'if' for when deleting element, the user is re-directed to '/elements' route.
+        // The template is destroyed while the modal is fadding out, that causes an error in this helper
+        // Without this there would be an error in the console.
+        if(Template.currentData()){
+            formType[this.elementFormType] = true;
+            return formType;
+        }
     },
     'elementInitials'(){
-        return this.elementId.split('-')[0];
+        // Need this 'if' for when deleting element, the user is re-directed to '/elements' route.
+        // Without this there would be an error in the console.
+        if(Template.currentData()){
+            return this.elementId.split('-')[0];
+        }
+    },
+    'manager'(){
+        return Meteor.user().profile.manager || Meteor.user().profile.admin ? true : false;
+    }
+});
+
+Template.editElementModal.events({
+    'click .js-removeElement'(event){
+        Modal.hide('editElementModal');
+        FlowRouter.go('/elements');
+        removeElement.call(this._id);
     }
 });
 

@@ -20,6 +20,14 @@ const schema = new SimpleSchema({
     elementType: {
         type: String,
         label: "Tipo",
+        autoValue: function(){
+            // This prevents the user from change the elementType after it's insertion
+            if (this.isUpdate || this.isUpsert){
+                this.unset();
+            } else {
+                return undefined;
+            }
+        },
         autoform: {
             type: 'select',
             options: function(){
@@ -34,11 +42,17 @@ const schema = new SimpleSchema({
         type: String,
         max: 8,
         autoValue: function(){
-            if (this.isFromTrustedCode) {
+            if (this.isUpdate && this.isFromTrustedCode) {
+                // This is for the cause when the user updates an category, and all elements of that category changes it's initials
+                // The method 'updateCategory' itself will generate the new elementId, hence the isFromTrustedCode clause
                 return undefined;
             } else {
-                let initials = this.isInsert ? 
+                let initials = this.isInsert ?
+                    // In cause this is new elements, this will generate the elementId
                     Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials : 
+                    // Case this is an update of elements, this will take the initials that already exist
+                    // Note that The change of elements's initials are blocked,
+                    // The user can only change the whole category initials, but not one elements initials.
                     Elements.findOne(this.docId).elementId.split('-')[0];
                 let number = this.field('elementNumber').value < 10 ? 
                     '00' + this.field('elementNumber').value :
@@ -228,6 +242,19 @@ export const updateElement = new ValidatedMethod({
             throw new Meteor.Error('Duplicate error', "O elemento já existe");
         } else {        
             Elements.update(_id, modifier);
+        }
+    }
+});
+
+
+// Method to remove elements
+export const removeElement = new ValidatedMethod({
+    name: 'removeElement',
+    validate: null,
+    run(elementId){
+        const user = Meteor.users.findOne(this.userId);
+        if (user.profile.manager || user.profile.admin){
+            Elements.remove(elementId);
         }
     }
 });
