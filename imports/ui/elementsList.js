@@ -94,12 +94,18 @@ AutoForm.hooks({
 Template.importElementsModal.events({
     'click .js-downloadHasMaintenance'(event){
         event.preventDefault();
-            
-        var data = ["Número", "Marca", "Modelo", "Número Série", "Localização", "Data Compra", "Capacidade/Potência", "Função", "Periodicidade (Meses)", "Periodicidade(Horas)", "Contacto Fornecedor", "Consumiveis", "Observações"];
+        const data = ["Número", "Marca", "Modelo", "Número Série", "Localização", "Data Compra", "Capacidade/Potência", "Função", "Periodicidade (Meses)", "Periodicidade(Horas)", "Contacto Fornecedor", "Consumiveis", "Observações"];
         writeXLSX(data, "manutenção.xlsx");
-        
-        
-        
+    },
+    'click .js-downloadHasCalibration'(event){
+        event.preventDefault();
+        const data = ["Número", "Data Compra", "Localização", "Marca", "Modelo", "Número Série", "Limite Inferior", "Precisão", "Gama Medida", "Periodicidade (Meses)", "Uso", "Critério Não Conforme", "Observações", "Gama Uso", "Valor Não Conforme", "Escala", "Resolução", "Unidades", "Digital?"];
+        writeXLSX(data, "calibração.xlsx");
+    },
+    'click .js-downloadHasSetpoint'(event){
+        event.preventDefault();
+        const data = ["Número", "Data de Compra", "Localização", "Marca", "Modelo", "Número Série", "Gama Medida", "Periodicidade (Meses)", "Uso", "Critério Não Conforme", "Observações", "Gama Uso", "Valor Não Conforme", "Unidades", "Digital?"];
+        writeXLSX(data, "setpoint.xlsx");
     }
 });
 

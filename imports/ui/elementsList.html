@@ -73,6 +73,7 @@
                                 {{> afQuickField name='use'}}
                                 {{> afQuickField name='units' }}
                                 {{> afQuickField name='noConform'}}
+                                {{> afQuickField name='isDigital' }}
                             </div>
                             {{> afQuickField name='memo' formgroup-class='col-xs-12'}}
                         </div>
@@ -120,7 +121,13 @@
                     <h4 class="modal-title">Importar Elementos</h4>
                 </div>
                 <div class="modal-body">
-                    <a href="#" class="js-downloadHasMaintenance">Descarregar ficheiro modelo para tipos de elementos com <strong>Manutenção</strong></a>
+                    <p>Descarregar ficheiro modelo para tipos de elementos:</p>
+                    <ul>
+                        <li><a href="#" class="js-downloadHasMaintenance"> com <strong>Manutenção</strong></a></li>
+                        <li><a href="#" class="js-downloadHasCalibration"> com <strong>Calibração</strong></a></li>
+                        <li><a href="#" class="js-downloadHasSetpoint"> com <strong>Set Point</strong></a></li>
+                    </ul>
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
