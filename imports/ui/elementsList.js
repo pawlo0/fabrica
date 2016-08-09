@@ -17,6 +17,13 @@ Template.elementsList.onCreated(function(){
     });
 });
 
+Template.elementsList.helpers({
+    'manager'(){
+        return Meteor.user() && (Meteor.user().profile.manager || Meteor.user().profile.admin) ? true : false;
+        
+    }
+});
+
 Template.elementsList.events({
     'click .js-addElement'(event){
         Modal.show('addElement');

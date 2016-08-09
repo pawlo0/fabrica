@@ -8,7 +8,9 @@
                 </div>
                 <div class="col-xs-10">
                     <span class="pull-right">
-                        <button class="btn btn-primary js-showEditElementModal">Editar</button>
+                        {{#if manager}}
+                            <button class="btn btn-primary js-showEditElementModal">Editar</button>
+                        {{/if}}
                         {{#if formType.hasCalibration }}
                             <button class="btn btn-success js-addCalibrationModal">Calibração</button>
                         {{/if}}

@@ -237,10 +237,12 @@ export const insertElement = new ValidatedMethod({
             newElement.plant = user.profile.plant;
         }
         
-        if (Elements.findOne({elementNumber: newElement.elementNumber, elementType: newElement.elementType, plant: newElement.plant})) {
-            throw new Meteor.Error('Duplicate error', "O elemento já existe");
-        } else {
-            Elements.insert(newElement);
+        if (user.profile.admin || user.profile.manager) {
+            if (Elements.findOne({elementNumber: newElement.elementNumber, elementType: newElement.elementType, plant: newElement.plant})) {
+                throw new Meteor.Error('Duplicate error', "O elemento já existe");
+            } else {
+                Elements.insert(newElement);
+            }
         }
     }
 });
@@ -252,11 +254,13 @@ export const updateElement = new ValidatedMethod({
         schema.validator({modifier: true});
     },
     run({_id, modifier}){
-        
-        if (Elements.findOne(_id).elementNumber != modifier.$set.elementNumber && Elements.findOne({elementNumber: modifier.$set.elementNumber, elementType: modifier.$set.elementType, plant: modifier.$set.plant})) {
-            throw new Meteor.Error('Duplicate error', "O elemento já existe");
-        } else {        
-            Elements.update(_id, modifier);
+        const user = Meteor.users.findOne(this.userId);
+        if (user.profile.admin || user.profile.manager) {
+            if (Elements.findOne(_id).elementNumber != modifier.$set.elementNumber && Elements.findOne({elementNumber: modifier.$set.elementNumber, elementType: modifier.$set.elementType, plant: modifier.$set.plant})) {
+                throw new Meteor.Error('Duplicate error', "O elemento já existe");
+            } else {        
+                Elements.update(_id, modifier);
+            }
         }
     }
 });

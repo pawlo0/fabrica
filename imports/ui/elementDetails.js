@@ -28,6 +28,9 @@ Template.elementDetails.helpers({
     },
     'isDigitalTranslated'(){
         return this.isDigital ? 'Sim' : 'Não';
+    },
+    'manager'(){
+        return Meteor.user() && (Meteor.user().profile.manager || Meteor.user().profile.admin) ? true : false;
     }
 });
 
