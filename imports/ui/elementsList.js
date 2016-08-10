@@ -113,6 +113,34 @@ Template.importElementsModal.events({
         event.preventDefault();
         const data = ["Número", "Data de Compra", "Localização", "Marca", "Modelo", "Número Série", "Gama Medida", "Periodicidade (Meses)", "Uso", "Critério Não Conforme", "Observações", "Gama Uso", "Valor Não Conforme", "Unidades", "Digital?"];
         writeXLSX(data, "setpoint.xlsx");
+    },
+    'change #importFiles'(event){
+        var files = event.currentTarget.files;
+        var i,f;
+        for (i = 0, f = files[i]; i != files.length; ++i) {
+            var reader = new FileReader();
+            var name = f.name;
+            reader.onload = function(e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, {type: 'binary'});
+                
+                var first_sheet_name = workbook.SheetNames[0];
+                var address_of_cell = 'A1';
+
+                /* Get worksheet */
+                var worksheet = workbook.Sheets[first_sheet_name];
+
+                /* Find desired cell */
+                var desired_cell = worksheet[address_of_cell];
+
+                /* Get the value */
+                var desired_value = desired_cell.v;
+                
+                console.log(desired_value);
+                
+            };
+            reader.readAsBinaryString(f);
+        }        
     }
 });
 
@@ -148,4 +176,20 @@ function Workbook() {
 	if(!(this instanceof Workbook)) return new Workbook();
 	this.SheetNames = [];
 	this.Sheets = {};
+}
+
+function handleFile(e) {
+    var files = e.target.files;
+    var i,f;
+    for (i = 0, f = files[i]; i != files.length; ++i) {
+        var reader = new FileReader();
+        var name = f.name;
+        reader.onload = function(e) {
+            var data = e.target.result;
+            //var workbook = XLSX.read(data, {type: 'binary'});
+            console.log(name);
+            /* DO SOMETHING WITH workbook HERE */
+        };
+        reader.readAsBinaryString(f);
+    }
 }
