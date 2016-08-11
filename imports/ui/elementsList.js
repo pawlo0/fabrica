@@ -159,7 +159,7 @@ Template.importElementsModal.events({
     'click .js-downloadHasSetpoint'(event){
         event.preventDefault();
         const data = { 
-            '!ref': 'A1:S2',
+            '!ref': 'A1:O2',
             A1: { t: 's', v: 'elementId'}, A2: { t: 's', v:'Número'},
             B1: { t: 's', v: 'purchasingDate'}, B2: { t: 's', v:'Data Compra'},
             C1: { t: 's', v: 'location'}, C2: { t: 's', v:'Localização'},

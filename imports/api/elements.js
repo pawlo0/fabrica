@@ -267,7 +267,7 @@ export const importElements = new ValidatedMethod({
             const lastLine = worksheet['!ref'].split(':')[1].match(/[a-zA-Z]+|[0-9]+/g)[1]*1;
             const lastColumn = worksheet['!ref'].split(':')[1].match(/[a-zA-Z]+|[0-9]+/g)[0];
             
-            let newElementObj = {}, objsCount = 0;
+            let newElementObj = {}, objsCount = 0, initials = false;
             
             // Cycle that goes through the lines, I know it should start at line 3,
             // This means first object will be be at cell A3
@@ -286,22 +286,39 @@ export const importElements = new ValidatedMethod({
                 }
                 
                 // Now that I have the object, some heavy checking.
-                if (
-                    // First to check if the elementId has the expected format
-                    // Something like EQ-001. Use a regexp to test that.
-                    newElementObj.elementId.match(/^[A-Z]{1,3}-[0-9]{1,4}$/m) && 
-                    // At the same time we also check if the element does not exist already in this plant, 
-                    // because we can't have duplicates of elementId in the same plant
-                    !Elements.findOne({plant: user.profile.plant, elementId: newElementObj.elementId}) &&
-                    // Also, at the same time, we check if we have the category we want to insert
-                    // The import xlsx fie won't have the category for each element.
-                    // The way to find the element's category will be from it's initial, that are unique for each plant. 
-                    // That is why we need to check if we have the category (and it's initials) already created for this plant.
-                    Categories.findOne({plant: user.profile.plant, initials: newElementObj.elementId.split('-')[0]})
-                ){
+                // First lets check if the elementId has the expected format
+                // Something like EQ-001. Use a regexp to test that.
+                if (newElementObj.elementId.match(/^[A-Z]{1,3}-[0-9]{1,4}$/m)) {
                     newElementObj.elementNumber = newElementObj.elementId.split('-')[1]*1;
-                    newElementObj.elementType = Categories.findOne({initials: newElementObj.elementId.split('-')[0], plant: user.profile.plant}).categoryName;
+                    initials = newElementObj.elementId.split('-')[0];
+                } else {
+                    continue;
+                }
+                
+                
+                // Then we check if we have the category we want to insert
+                // The import xlsx fie won't have the category for each element.
+                // The way to find the element's category will be from it's initial, that are unique for each plant. 
+                // That is why we need to check if we have the category (and it's initials) already created for this plant.
+                // Also, I'll need the categoryName to construct the elementType
+                if( Categories.findOne({plant: user.profile.plant, initials}) ) {
+                    newElementObj.elementType = Categories.findOne({initials, plant: user.profile.plant}).categoryName;
+                } else {
+                    continue;
+                }
+                    
+                // Finally we also check if the element does not exist already in this plant, 
+                // because we can't have duplicates of elementId in the same plant
+                if (!Elements.findOne({plant: user.profile.plant, elementNumber: newElementObj.elementNumber, elementType: newElementObj.elementType}) ){
+                    // This shouldn't happen, but we'll allow inserts without manufacturer or without model or serial number.
+                    if (!newElementObj.manufacturer) { newElementObj.manufacturer = '??' }
+                    if (!newElementObj.model) { newElementObj.model = '??' }
+                    if (!newElementObj.serialNumber) { newElementObj.serialNumber = '??' }
+                    if (!newElementObj.frequencyMonths) { newElementObj.frequencyMonths = 12 }
+                    
+                    // Finally insert the elements, note I've used the method and not inserted directly.
                     insertElement.call(newElementObj);
+                    // And count the inserts made
                     objsCount++;
                 } else {
                     continue;
