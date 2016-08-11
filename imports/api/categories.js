@@ -15,7 +15,7 @@ export const Categories = new Mongo.Collection('categories');
 const schema = new SimpleSchema({
     categoryName: {
         type: String,
-        max: 20,
+        max: 25,
         label: "Nome"
     },
     initials: {

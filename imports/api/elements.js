@@ -74,7 +74,8 @@ const schema = new SimpleSchema({
     },
     frequencyMonths: {
         type: Number,
-        label: "Periodicidade (Meses)"
+        label: "Periodicidade (Meses)",
+        optional: true
     },
     frequencyHours: {
         type: Number,
@@ -171,12 +172,14 @@ const schema = new SimpleSchema({
     noConformValue: {
         type: Number,
         label: "Valor Não conformidade",
-        optional: true
+        optional: true,
+        decimal: true
     },
     setPoint: {
         type: Number,
         label: "Disparo / Setpoint",
-        optional: true
+        optional: true,
+        decimal: true
     },
     memo: {
         type: String,
@@ -314,7 +317,6 @@ export const importElements = new ValidatedMethod({
                     if (!newElementObj.manufacturer) { newElementObj.manufacturer = '??' }
                     if (!newElementObj.model) { newElementObj.model = '??' }
                     if (!newElementObj.serialNumber) { newElementObj.serialNumber = '??' }
-                    if (!newElementObj.frequencyMonths) { newElementObj.frequencyMonths = 12 }
                     
                     // Finally insert the elements, note I've used the method and not inserted directly.
                     insertElement.call(newElementObj);
@@ -357,5 +359,7 @@ TabularTables.Elements= new Tabular.Table({
     extraFields: ['elementNumber'],
     responsive: true,
     autoWidth: false,
-    order: [[1, 'asc'], [0,'asc']]
+    order: [[1, 'asc'], [0,'asc']],
+    "lengthMenu": [[25, 100, -1], [25, 100, "All"]],
+    limit: 5000,
 });
