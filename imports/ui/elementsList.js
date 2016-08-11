@@ -4,6 +4,8 @@ import { $ } from 'meteor/jquery';
 import { XLSX } from 'meteor/huaming:js-xlsx';
 import { saveAs } from 'meteor/pfafman:filesaver';
 
+import { importElements } from '../api/elements.js';
+
 import { Elements } from '../api/elements.js';
 import { Categories } from '../api/categories.js';
 
@@ -13,6 +15,7 @@ import './elementsList.html';
 Template.elementsList.onCreated(function(){
     const self = this;
     self.autorun(function(){
+        self.subscribe('elements');
         self.subscribe('categories');
     });
 });
@@ -101,7 +104,23 @@ AutoForm.hooks({
 Template.importElementsModal.events({
     'click .js-downloadHasMaintenance'(event){
         event.preventDefault();
-        const data = ["Número", "Marca", "Modelo", "Número Série", "Localização", "Data Compra", "Capacidade/Potência", "Função", "Periodicidade (Meses)", "Periodicidade(Horas)", "Contacto Fornecedor", "Consumiveis", "Observações"];
+        //const data = ["Número", "Marca", "Modelo", "Número Série", "Localização", "Data Compra", "Capacidade/Potência", "Função", "Periodicidade (Meses)", "Periodicidade(Horas)", "Contacto Fornecedor", "Consumiveis", "Observações"];
+        const data = { 
+            '!ref': 'A1:M2',
+            A1: { t: 's', v: 'elementId'}, A2: { t: 's', v:'Número'},
+            B1: { t: 's', v: 'manufacturer'}, B2: { t: 's', v:'Marca'},
+            C1: { t: 's', v: 'model'}, C2: { t: 's', v:'Modelo'},
+            D1: { t: 's', v: 'serialNumber'}, D2: { t: 's', v:'Número Série'},
+            E1: { t: 's', v: 'location'}, E2: { t: 's', v:'Localização'},
+            F1: { t: 's', v: 'purchasingDate'}, F2: { t: 's', v:'Data Compra'},
+            G1: { t: 's', v: 'capacity'}, G2: { t: 's', v:'Capacidade/Potência'},
+            H1: { t: 's', v: 'use'}, H2: { t: 's', v:'Função'},
+            I1: { t: 's', v: 'frequencyMonths'}, I2: { t: 's', v:'Periodicidade (Meses)'},
+            J1: { t: 's', v: 'frequencyHours'}, J2: { t: 's', v:'Periodicidade (Horas)'},
+            K1: { t: 's', v: 'supplier'}, K2: { t: 's', v:'Contacto Fornecedor'},
+            L1: { t: 's', v: 'supplies'}, L2: { t: 's', v:'Consumiveis'},
+            M1: { t: 's', v: 'memo'}, M2: { t: 's', v:'Observações'},
+        };
         writeXLSX(data, "manutenção.xlsx");
     },
     'click .js-downloadHasCalibration'(event){
@@ -119,24 +138,11 @@ Template.importElementsModal.events({
         var i,f;
         for (i = 0, f = files[i]; i != files.length; ++i) {
             var reader = new FileReader();
-            var name = f.name;
             reader.onload = function(e) {
                 var data = e.target.result;
                 var workbook = XLSX.read(data, {type: 'binary'});
-                
                 var first_sheet_name = workbook.SheetNames[0];
-                var address_of_cell = 'A1';
-
-                /* Get worksheet */
-                var worksheet = workbook.Sheets[first_sheet_name];
-
-                /* Find desired cell */
-                var desired_cell = worksheet[address_of_cell];
-
-                /* Get the value */
-                var desired_value = desired_cell.v;
-                
-                console.log(desired_value);
+                importElements.call(workbook.Sheets[first_sheet_name]);
                 
             };
             reader.readAsBinaryString(f);
@@ -145,6 +151,7 @@ Template.importElementsModal.events({
 });
 
 function writeXLSX(data, fileName){
+    /*
     var ws= {};
     for (var i=0; i< data.length; i++) {
       var cell_ref = XLSX.utils.encode_cell({c:i,r:0});
@@ -152,13 +159,13 @@ function writeXLSX(data, fileName){
       ws[cell_ref] = cell;
     }
     ws['!ref'] = XLSX.utils.encode_range({s:{c:0, r:0}, e:{c:data.length, r:0}});
-    
-    var ws_name = "SheetJS";
+    */
+    var ws_name = fileName;
     var wb = new Workbook(); //, ws = sheet_from_array_of_arrays(data);
     
     /* add worksheet to workbook */
     wb.SheetNames.push(ws_name);
-    wb.Sheets[ws_name] = ws;
+    wb.Sheets[ws_name] = data;
     var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
     
     /* the saveAs call downloads a file on the local machine */
@@ -176,20 +183,4 @@ function Workbook() {
 	if(!(this instanceof Workbook)) return new Workbook();
 	this.SheetNames = [];
 	this.Sheets = {};
-}
-
-function handleFile(e) {
-    var files = e.target.files;
-    var i,f;
-    for (i = 0, f = files[i]; i != files.length; ++i) {
-        var reader = new FileReader();
-        var name = f.name;
-        reader.onload = function(e) {
-            var data = e.target.result;
-            //var workbook = XLSX.read(data, {type: 'binary'});
-            console.log(name);
-            /* DO SOMETHING WITH workbook HERE */
-        };
-        reader.readAsBinaryString(f);
-    }
 }

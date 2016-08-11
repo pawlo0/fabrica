@@ -77,26 +77,14 @@ const schema = new SimpleSchema({
         type: String,
         label: "Fábrica",
     	autoValue: function(){
-	        // Element's plant can only be defined by administratores, 
-	        // Or if is inserted by server.
-	        // Otherwise it will have the same plant as the user that is inserting the newUser
+	        // Element's plant can only be defined by the user's own plant.
 	        const user = Meteor.users.findOne(this.userId);
-    	    if ((user && user.profile.admin) || this.isFromTrustedCode){
-    	        return undefined;
-    	    } else if (user) {
+    	    if (user) {
     	        return user.profile.plant;
     	    } else {
     	        this.unset();
     	    }
-    	},
-    	autoform: {
-    		type: 'select',
-    		options: function(){
-    		    return Plants.find().map(function(obj){
-    		        return {value: obj.plantName, label: obj.plantName};
-    		    });
-    		}
-    	}          
+    	}
     },
     frequencyMonths: {
         type: Number,
@@ -274,6 +262,66 @@ export const removeElement = new ValidatedMethod({
         const user = Meteor.users.findOne(this.userId);
         if (user.profile.manager || user.profile.admin){
             Elements.remove(elementId);
+        }
+    }
+});
+
+
+// Method to import XLSX files
+export const importElements = new ValidatedMethod({
+    name: 'importElements',
+    validate: null,
+    run(worksheet){
+        const user = Meteor.users.findOne(this.userId);
+        if (user.profile.admin || user.profile.manager) {        
+            
+            // There are other ways to go through lines and columns, but I choose this way
+            // the !ref objects tells me the whole range, but uses the Common Spreadsheet Format (CSF)
+            // this means the range will have this aspect: A1:G13
+            const lastLine = worksheet['!ref'].split(':')[1].match(/[a-zA-Z]+|[0-9]+/g)[1]*1;
+            const lastColumn = worksheet['!ref'].split(':')[1].match(/[a-zA-Z]+|[0-9]+/g)[0];
+            
+            let newElementObj = {}, objsCount = 0;
+            
+            // Cycle that goes through the lines, I know it should start at line 3,
+            // This means first object will be be at cell A3
+            for (var line = 3; line <= lastLine; line++) {
+                newElementObj = {};
+                
+                // This cycle goes through the columns
+                // number 65 means letter A, so it starts at columns A until last column.
+                // It prepares the new elements object 
+                for (var column = 65; column < lastColumn.charCodeAt(0); column++) {
+                    if (worksheet[String.fromCharCode(column)+line]) {
+                        newElementObj[worksheet[String.fromCharCode(column)+'1'].v] = worksheet[String.fromCharCode(column)+line].v;
+                    } else {
+                        continue;
+                    }
+                }
+                
+                // Now that I have the object, some heavy checking.
+                if (
+                    // First to check if the elementId has the expected format
+                    // Something like EQ-001. Use a regexp to test that.
+                    newElementObj.elementId.match(/^[A-Z]{1,3}-[0-9]{3,4}$/m) && 
+                    // At the same time we also check if the element does not exist already in this plant, 
+                    // because we can't have duplicates of elementId in the same plant
+                    !Elements.findOne({plant: user.profile.plant, elementId: newElementObj.elementId}) &&
+                    // Also, at the same time, we check if we have the category we want to insert
+                    // The import xlsx fie won't have the category for each element.
+                    // The way to find the element's category will be from it's initial, that are unique for each plant. 
+                    // That is why we need to check if we have the category (and it's initials) already created for this plant.
+                    Categories.findOne({plant: user.profile.plant, initials: newElementObj.elementId.split('-')[0]})
+                ){
+                    newElementObj.elementNumber = newElementObj.elementId.split('-')[1]*1;
+                    newElementObj.elementType = newElementObj.elementId.split('-')[0];
+                    newElementObj.plant = user.profile.plant;
+                    Elements.insert(newElementObj);
+                    objsCount++;
+                } else {
+                    continue;
+                }
+            }
         }
     }
 });
