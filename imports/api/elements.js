@@ -300,8 +300,8 @@ export const importElements = new ValidatedMethod({
                     Categories.findOne({plant: user.profile.plant, initials: newElementObj.elementId.split('-')[0]})
                 ){
                     newElementObj.elementNumber = newElementObj.elementId.split('-')[1]*1;
-                    newElementObj.elementType = newElementObj.elementId.split('-')[0];
-                    Elements.insert(newElementObj);
+                    newElementObj.elementType = Categories.findOne({initials: newElementObj.elementId.split('-')[0], plant: user.profile.plant}).categoryName;
+                    insertElement.call(newElementObj);
                     objsCount++;
                 } else {
                     continue;
