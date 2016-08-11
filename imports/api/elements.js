@@ -42,35 +42,21 @@ const schema = new SimpleSchema({
         type: String,
         max: 8,
         autoValue: function(){
-            if (this.isUpdate && this.isFromTrustedCode) {
-                // This is for the cause when the user updates an category, and all elements of that category changes it's initials
-                // The method 'updateCategory' itself will generate the new elementId, hence the isFromTrustedCode clause
-                return undefined;
-            } else {
-                let initials = this.isInsert ?
-                    // In cause this is new elements, this will generate the elementId
-                    Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).initials : 
-                    // Case this is an update of elements, this will take the initials that already exist
-                    // Note that The change of elements's initials are blocked,
-                    // The user can only change the whole category initials, but not one elements initials.
-                    Elements.findOne(this.docId).elementId.split('-')[0];
-                let number = this.field('elementNumber').value < 10 ? 
-                    '00' + this.field('elementNumber').value :
-                    number = this.field('elementNumber').value < 100 ? 
-                        '0' + this.field('elementNumber').value :
-                        this.field('elementNumber').value;
-                return initials + '-' + number;
-            }
+            let categoryName = this.field('elementType').isSet ? this.field('elementType').value : Elements.findOne(this.docId).elementType;
+            const initials = Categories.findOne({plant: Meteor.user().profile.plant, categoryName}).initials;
+            let number = this.field('elementNumber').value < 10 ? 
+                '00' + this.field('elementNumber').value :
+                number = this.field('elementNumber').value < 100 ? 
+                    '0' + this.field('elementNumber').value :
+                    this.field('elementNumber').value;
+            return initials + '-' + number;
         }
     },
     elementFormType: {
         type: String,
         autoValue: function(){
-            if (this.isInsert) {
-                return Categories.findOne({plant: Meteor.user().profile.plant, categoryName: this.field('elementType').value}).type;
-            } else {
-                this.unset();
-            }
+            let categoryName = this.field('elementType').isSet ? this.field('elementType').value : Elements.findOne(this.docId).elementType;
+            return Categories.findOne({plant: Meteor.user().profile.plant, categoryName}).type;
         }
     },
     plant: {
@@ -315,7 +301,6 @@ export const importElements = new ValidatedMethod({
                 ){
                     newElementObj.elementNumber = newElementObj.elementId.split('-')[1]*1;
                     newElementObj.elementType = newElementObj.elementId.split('-')[0];
-                    newElementObj.plant = user.profile.plant;
                     Elements.insert(newElementObj);
                     objsCount++;
                 } else {

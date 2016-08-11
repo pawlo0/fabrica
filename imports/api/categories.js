@@ -112,18 +112,15 @@ export const updateCategory = new ValidatedMethod({
         if (oldCategory.initials != modifier.$set.initials && Categories.findOne({initials: modifier.$set.initials, plant: modifier.$set.plant})) {
             throw new Meteor.Error('Duplicate error', "A categoria já existe");
         } else {
+            // And this is to change the category itself.
+            Categories.update(_id, modifier);
             
             // This is to change all elements of this category 
             Elements.find({plant: oldCategory.plant, elementType: oldCategory.categoryName}).map(function(element){
-                const newElementId = modifier.$set.initials + '-' + element.elementId.split('-')[1];
                 Elements.update(element._id, {$set: {
                     elementType: modifier.$set.categoryName, 
-                    elementId: newElementId,
-                    elementFormType: modifier.$set.type
                 }});
             });
-            // And this is to change the category itself.
-            Categories.update(_id, modifier);
             
         }
     }
