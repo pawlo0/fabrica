@@ -123,12 +123,23 @@
                     <h4 class="modal-title">Importar Elementos</h4>
                 </div>
                 <div class="modal-body">
+                    {{#if importedElementsCount}}
+                        <div class="alert alert-success" role="alert">Inseridos {{importedElementsCount}} elementos!</div>
+                    {{/if}}                    
                     <p>Descarregar ficheiro modelo para tipos de elementos:</p>
                     <ul>
                         <li><a href="#" class="js-downloadHasMaintenance"> com <strong>Manutenção</strong></a></li>
                         <li><a href="#" class="js-downloadHasCalibration"> com <strong>Calibração</strong></a></li>
                         <li><a href="#" class="js-downloadHasSetpoint"> com <strong>Set Point</strong></a></li>
                     </ul>
+                    <H3>Instruções</H3>
+                    <ul>
+                        <li><strong>Fazer download do ficheiro correspondente.</strong> Podem ser usados outros ficheiros, mas têm de respeitar o mesmo esquema dos ficheiros, onde a primeira linha será o nome do campo na base de dados e a segunda linha o nome que é apresentado na página.</li>
+                        <li><strong>Não apagar nem mudar as células da primeira e segunda linha.</strong> Copiar para esse ficheiro os elementos a importar a partir da terceira linha para baixo.</li>
+                        <li><strong>Respeitar o formato "AAA-0000".</strong> É importante que a primeira coluna respeite os seguinte formato: 1 a 3 letras (traço) 1 a 4 números. Por exemplo: EQ-001. As primeiras 1 a 3 letras são o tipo de elemento, os números são o número do elemento. Os zeros não têm de existir.</li>
+                        <li><strong>Criar primeiro os tipos de elemento.</strong> O tipo de elemento já tem de estar criado. Se por exemplo não existir nenhum tipo de elemento cujas iniciais sejam "EQ", um elementos com o número "EQ-001" não será importado.</li>
+                    </ul>
+                    
                     <input type="file" id="importFiles">
                 </div>
                 <div class="modal-footer">

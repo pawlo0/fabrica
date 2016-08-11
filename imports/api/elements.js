@@ -289,7 +289,7 @@ export const importElements = new ValidatedMethod({
                 if (
                     // First to check if the elementId has the expected format
                     // Something like EQ-001. Use a regexp to test that.
-                    newElementObj.elementId.match(/^[A-Z]{1,3}-[0-9]{3,4}$/m) && 
+                    newElementObj.elementId.match(/^[A-Z]{1,3}-[0-9]{1,4}$/m) && 
                     // At the same time we also check if the element does not exist already in this plant, 
                     // because we can't have duplicates of elementId in the same plant
                     !Elements.findOne({plant: user.profile.plant, elementId: newElementObj.elementId}) &&
@@ -307,6 +307,7 @@ export const importElements = new ValidatedMethod({
                     continue;
                 }
             }
+            return objsCount;
         }
     }
 });

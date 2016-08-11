@@ -99,12 +99,19 @@ AutoForm.hooks({
 });
 
 
+Template.importElementsModal.onCreated(function(){
+    this.importedElementsCount = new ReactiveVar(false);
+});
 
+Template.importElementsModal.helpers({
+    'importedElementsCount'(){
+        return Template.instance().importedElementsCount.get();
+    }
+});
 
 Template.importElementsModal.events({
     'click .js-downloadHasMaintenance'(event){
         event.preventDefault();
-        //const data = ["Número", "Marca", "Modelo", "Número Série", "Localização", "Data Compra", "Capacidade/Potência", "Função", "Periodicidade (Meses)", "Periodicidade(Horas)", "Contacto Fornecedor", "Consumiveis", "Observações"];
         const data = { 
             '!ref': 'A1:M2',
             A1: { t: 's', v: 'elementId'}, A2: { t: 's', v:'Número'},
@@ -125,15 +132,53 @@ Template.importElementsModal.events({
     },
     'click .js-downloadHasCalibration'(event){
         event.preventDefault();
-        const data = ["Número", "Data Compra", "Localização", "Marca", "Modelo", "Número Série", "Limite Inferior", "Precisão", "Gama Medida", "Periodicidade (Meses)", "Uso", "Critério Não Conforme", "Observações", "Gama Uso", "Valor Não Conforme", "Escala", "Resolução", "Unidades", "Digital?"];
+        const data = { 
+            '!ref': 'A1:S2',
+            A1: { t: 's', v: 'elementId'}, A2: { t: 's', v:'Número'},
+            B1: { t: 's', v: 'purchasingDate'}, B2: { t: 's', v:'Data Compra'},
+            C1: { t: 's', v: 'location'}, C2: { t: 's', v:'Localização'},
+            D1: { t: 's', v: 'manufacturer'}, D2: { t: 's', v:'Marca'},
+            E1: { t: 's', v: 'model'}, E2: { t: 's', v:'Modelo'},
+            F1: { t: 's', v: 'serialNumber'}, F2: { t: 's', v:'Número Série'},
+            G1: { t: 's', v: 'bottomLimit'}, G2: { t: 's', v:'Limite inferior'},
+            H1: { t: 's', v: 'precisionClass'}, H2: { t: 's', v:'Precisão'},
+            I1: { t: 's', v: 'rangeMeasure'}, I2: { t: 's', v:'Gama Medida'},
+            J1: { t: 's', v: 'frequencyMonths'}, J2: { t: 's', v:'Periodicidade (Meses)'},
+            K1: { t: 's', v: 'use'}, K2: { t: 's', v:'Função'},
+            L1: { t: 's', v: 'noConform'}, L2: { t: 's', v:'Critério não conforme'},
+            M1: { t: 's', v: 'memo'}, M2: { t: 's', v:'Observações'},
+            N1: { t: 's', v: 'rangeUse'}, N2: { t: 's', v:'Gama Uso'},
+            O1: { t: 's', v: 'noConformValue'}, O2: { t: 's', v:'Valor Não Conforme'},
+            P1: { t: 's', v: 'scale'}, P2: { t: 's', v:'Escala'},
+            Q1: { t: 's', v: 'resolution'}, Q2: { t: 's', v:'Resolução'},
+            R1: { t: 's', v: 'units'}, R2: { t: 's', v:'Unidades'},
+            S1: { t: 's', v: 'isDigital'}, S2: { t: 's', v:'Digital?'},
+        };
         writeXLSX(data, "calibração.xlsx");
     },
     'click .js-downloadHasSetpoint'(event){
         event.preventDefault();
-        const data = ["Número", "Data de Compra", "Localização", "Marca", "Modelo", "Número Série", "Gama Medida", "Periodicidade (Meses)", "Uso", "Critério Não Conforme", "Observações", "Gama Uso", "Valor Não Conforme", "Unidades", "Digital?"];
+        const data = { 
+            '!ref': 'A1:S2',
+            A1: { t: 's', v: 'elementId'}, A2: { t: 's', v:'Número'},
+            B1: { t: 's', v: 'purchasingDate'}, B2: { t: 's', v:'Data Compra'},
+            C1: { t: 's', v: 'location'}, C2: { t: 's', v:'Localização'},
+            D1: { t: 's', v: 'manufacturer'}, D2: { t: 's', v:'Marca'},
+            E1: { t: 's', v: 'model'}, E2: { t: 's', v:'Modelo'},
+            F1: { t: 's', v: 'serialNumber'}, F2: { t: 's', v:'Número Série'},
+            G1: { t: 's', v: 'rangeMeasure'}, G2: { t: 's', v:'Gama Medida'},
+            H1: { t: 's', v: 'frequencyMonths'}, H2: { t: 's', v:'Periodicidade (Meses)'},
+            I1: { t: 's', v: 'use'}, I2: { t: 's', v:'Função'},
+            J1: { t: 's', v: 'noConform'}, J2: { t: 's', v:'Critério não conforme'},
+            K1: { t: 's', v: 'memo'}, K2: { t: 's', v:'Observações'},
+            L1: { t: 's', v: 'rangeUse'}, L2: { t: 's', v:'Gama Uso'},
+            M1: { t: 's', v: 'noConformValue'}, M2: { t: 's', v:'Valor Não Conforme'},
+            N1: { t: 's', v: 'units'}, N2: { t: 's', v:'Unidades'},
+            O1: { t: 's', v: 'isDigital'}, O2: { t: 's', v:'Digital?'},
+        };
         writeXLSX(data, "setpoint.xlsx");
     },
-    'change #importFiles'(event){
+    'change #importFiles'(event, template){
         var files = event.currentTarget.files;
         var i,f;
         for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -142,24 +187,22 @@ Template.importElementsModal.events({
                 var data = e.target.result;
                 var workbook = XLSX.read(data, {type: 'binary'});
                 var first_sheet_name = workbook.SheetNames[0];
-                importElements.call(workbook.Sheets[first_sheet_name]);
+                importElements.call(workbook.Sheets[first_sheet_name], function(error, result){
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        template.importedElementsCount.set(result);
+                    }
+                });
                 
             };
             reader.readAsBinaryString(f);
-        }        
+        }
     }
 });
 
 function writeXLSX(data, fileName){
-    /*
-    var ws= {};
-    for (var i=0; i< data.length; i++) {
-      var cell_ref = XLSX.utils.encode_cell({c:i,r:0});
-      var cell = {v: data[i], t: "s"};
-      ws[cell_ref] = cell;
-    }
-    ws['!ref'] = XLSX.utils.encode_range({s:{c:0, r:0}, e:{c:data.length, r:0}});
-    */
+
     var ws_name = fileName;
     var wb = new Workbook(); //, ws = sheet_from_array_of_arrays(data);
     
