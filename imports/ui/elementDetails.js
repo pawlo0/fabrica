@@ -31,6 +31,12 @@ Template.elementDetails.helpers({
     },
     'manager'(){
         return Meteor.user() && (Meteor.user().profile.manager || Meteor.user().profile.admin) ? true : false;
+    },
+    'hasPeriodicity'(){
+        return this.frequencyMonths > 0 ? true : false;
+    },
+    'isOnTime'(){
+        return true;
     }
 });
 

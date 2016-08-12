@@ -27,9 +27,11 @@
             <div class="row">
                 <div class="col-md-6">
                     <table class="table table-bordered">
+                        <thead>
+                            <tr><td colspan="2"><h4>Detalhes do(a) {{elementType}}</h4></td></tr>
+                        </thead>
                         <tbody>
                             <tr><td>Numero:</td><td><strong>{{elementId}}</strong></td></tr>
-                            <tr><td>Tipo:</td><td>{{elementType}}</td></tr>
                             <tr><td>Marca:</td><td>{{manufacturer}}</td></tr>
                             <tr><td>Modelo:</td><td>{{model}}</td></tr>
                             <tr><td>Número Série:</td><td>{{serialNumber}}</td></tr>
@@ -47,7 +49,7 @@
                                 <tr><td>Critério de Não Conformidade:</td><td>{{noConform}}</td></tr>
                                 <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>
                                 <tr><td>Digital:</td><td>{{isDigitalTranslated}}</td></tr>
-                                <tr><td>OBS: {{memo}}</td></tr>
+                                <tr><td colspan="2">OBS: {{memo}}</td></tr>
                             {{/if}}
                             {{#if formType.hasSetpoint }}
                                 <tr><td>Disparo / Setpoint:</td><td>{{setPoint}}</td></tr>
@@ -55,32 +57,78 @@
                                 <tr><td>Unidades:</td><td>{{units}}</td></tr>
                                 <tr><td>Critério de Não Conformidade:</td><td>{{noConform}}</td></tr>
                                 <tr><td>Valor de Não Conformidade:</td><td>{{noConformValue}}</td></tr>                                
-                                <tr><td>OBS: {{memo}}</td></tr>
+                                <tr><td colspan="2">OBS: {{memo}}</td></tr>
                             {{/if}}
                             {{#if formType.hasMaintenance }}
                                 <tr><td>Capacidade:</td><td>{{capacity}}</td></tr>
                                 <tr><td>Fornecedor:</td><td>{{supplier}}</td></tr>
                                 <tr><td>Consumíveis:</td><td>{{supplies}}</td></tr>
-                                <tr><td>OBS: {{memo}}</td></tr>
+                                <tr><td colspan="2">OBS: {{memo}}</td></tr>
                             {{/if}}
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <table class="table table-bordered">
-                        <tbody>
-                            {{#if formType.hasCalibration }}
-                                <tr><td>Frequência Calibração:</td><td>{{frequencyMonths}} Meses</td></tr>
-                            {{/if}}
-                            {{#if formType.hasSetpoint }}
-                                <tr><td>Frequência Verificação:</td><td>{{frequencyMonths}} Meses</td></tr>
-                            {{/if}}
-                            {{#if formType.hasMaintenance }}
-                                <tr><td>Frequência Manutenção (Meses):</td><td>{{frequencyMonths}} Meses</td></tr>
-                                <tr><td>Frequência Manutenção (Horas):</td><td>{{frequencyHours}} Horas</td></tr>
-                            {{/if}}
-                        </tbody>
-                    </table>
+                {{#if hasPeriodicity}}
+                    {{#if formType.hasCalibration }}
+                        {{#if isOnTime }}
+                            <div class="alert alert-success" role="alert">
+                                <h3>Estado calibração: <strong>Feita</strong></h3>
+                                <p>Próxima calibração: </p>
+                                <p>Frequência calibração: <strong>{{frequencyMonths}} Meses</strong></p>
+                            </div>
+                        {{else}}
+                            <div class="alert alert-danger" role="alert">
+                                <h3>Estado calibração: <strong>Por fazer</strong></h3>
+                                <p>Calibração expirou em: </p>
+                                <p>Frequência calibração: <strong>{{frequencyMonths}} Meses</strong></p>
+                            </div>
+                        {{/if}}
+                    {{/if}}
+                    {{#if formType.hasSetpoint }}
+                        {{#if isOnTime }}
+                            <div class="alert alert-success" role="alert">
+                                <h3>Estado verificação: <strong>Feita</strong></h3>
+                                <p>Próxima verificação: </p>
+                                <p>Frequência verificação: <strong>{{frequencyMonths}} Meses</strong></p>
+                            </div>
+                        {{else}}
+                            <div class="alert alert-danger" role="alert">
+                                <h3>Estado verificação: <strong>Por fazer</strong></h3>
+                                <p>Verificação expirou em: </p>
+                                <p>Frequência verificação: <strong>{{frequencyMonths}} Meses</strong></p>
+                            </div>
+                        {{/if}}
+                    {{/if}}
+                    {{#if formType.hasMaintenance }}
+                        {{#if isOnTime }}
+                            <div class="alert alert-success" role="alert">
+                                <h3>Estado manutenção: <strong>Feita</strong></h3>
+                                <p>Próxima manutenção: </p>
+                                {{#if frequencyHours}}
+                                    <p>Frequência Manutenção (o que atingir primeiro): <strong>{{frequencyMonths}} Meses</strong> ou <strong>{{frequencyHours}} Horas</strong> de operação</p>
+                                {{else}}
+                                    <p>Frequência Manutenção: <strong>{{frequencyMonths}} Meses</strong></p>
+                                {{/if}}
+                            </div>                                
+                        {{else}}
+                            <div class="alert alert-danger" role="alert">
+                                <h3>Estado manutenção: <strong>Por fazer</strong></h3>
+                                <p>Manutenção expirou em: </p>
+                                {{#if frequencyHours}}
+                                    <p>Frequência Manutenção (o que atingir primeiro): <strong>{{frequencyMonths}} Meses</strong> ou <strong>{{frequencyHours}} Horas</strong> de operação</p>
+                                {{else}}
+                                    <p>Frequência Manutenção: <strong>{{frequencyMonths}} Meses</strong></p>
+                                {{/if}}
+                            </div>
+                        {{/if}}                    
+                    {{/if}}
+                {{else}} 
+                    <!-- it means it has 0 or no value for the frequencyMonths field -->
+                    <div class="alert alert-default" role="alert">
+                        <p>Este equipamento não tem periodicidade definida.</p>
+                    </div>                
+                {{/if}}
                 </div>
             </div>
             {{/with}}
