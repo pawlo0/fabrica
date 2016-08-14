@@ -2,6 +2,7 @@ import '../imports/api/users.js';
 import {Plants} from '../imports/api/plants.js';
 import {Categories} from '../imports/api/categories.js';
 import {Elements} from '../imports/api/elements.js';
+import {Actions} from '../imports/api/actions.js';
 
 Meteor.startup(() => {
     // Creates first user in case there's no user, with full admin rights
@@ -65,3 +66,4 @@ Meteor.publish('singleElement', function(Id){
         return Elements.find(Id);
     }
 });
+
