@@ -12,13 +12,13 @@
                             <button class="btn btn-primary js-showEditElementModal">Editar</button>
                         {{/if}}
                         {{#if formType.hasCalibration }}
-                            <button class="btn btn-success js-addCalibrationModal">Calibração</button>
+                            <button class="btn btn-success js-addActionModal">Calibração</button>
                         {{/if}}
                         {{#if formType.hasSetpoint }}
-                            <button class="btn btn-success js-addVerificationModal">Verificação</button>
+                            <button class="btn btn-success js-addActionModal">Verificação</button>
                         {{/if}}
                         {{#if formType.hasMaintenance }}
-                            <button class="btn btn-success js-addMaintenanceModal">Manutenção</button>
+                            <button class="btn btn-success js-addActionModal">Manutenção</button>
                         {{/if}}
                     </span>
                 </div>
@@ -226,6 +226,34 @@
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
                 {{/autoForm}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="addActionModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{#if formType.hasCalibration }}
+                        <h4 class="modal-title">Adicionar Calibração</h4>
+                    {{/if}}
+                    {{#if formType.hasSetpoint }}
+                        <h4 class="modal-title">Adicionar Verificação</h4>
+                    {{/if}}
+                    {{#if formType.hasMaintenance }}
+                        <h4 class="modal-title">Adicionar Manutenção</h4>
+                    {{/if}}
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
             </div>
         </div>
     </div>

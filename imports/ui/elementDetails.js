@@ -45,6 +45,11 @@ Template.elementDetails.events({
         Modal.show('editElementModal', ()=>{
             return Elements.findOne(this._id);
         });
+    },
+    'click .js-addActionModal'(event){
+        Modal.show('addActionModal', () => {
+            return Elements.findOne(this._id);
+        });
     }
 });
 
@@ -87,6 +92,14 @@ Template.editElementModal.events({
         Modal.hide('editElementModal');
         FlowRouter.go('/elements');
         removeElement.call(this._id);
+    }
+});
+
+Template.addActionModal.helpers({
+    'formType'(){
+        let formType = {};
+        formType[this.elementFormType] = true;
+        return formType;
     }
 });
 
