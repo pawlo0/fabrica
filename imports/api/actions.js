@@ -8,9 +8,11 @@ const schema = new SimpleSchema({
         type: Date,
         label: "Data"
     },
-    element: {
+    elementId: {
         type: String,
-        label: "Elemento"
+    },
+    plant: {
+        type: String,
     },
     actionType: {
         type: String,
@@ -83,3 +85,16 @@ const schema = new SimpleSchema({
 
 Actions.attachSchema(schema);
 
+
+// Method to insert new actions
+export const insertAction = new ValidatedMethod({
+    name: 'insertAction',
+    validate(obj){
+        schema.validator({clean: true});
+    },
+    run(newAction){
+        
+        Actions.insert(newAction);        
+                    
+    }
+})

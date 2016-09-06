@@ -2,3 +2,6 @@
     max-height: 50px;
     max-width: 150px;
 }
+.js-addElement:hover {
+    cursor: pointer;
+}

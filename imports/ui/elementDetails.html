@@ -246,14 +246,42 @@
                         <h4 class="modal-title">Adicionar Manutenção</h4>
                     {{/if}}
                 </div>
+                {{#autoForm collection=actions id='insertActionForm' type='method' meteormethod='insertAction' singleMethodArgument=true}}
                 <div class="modal-body">
-                    ...
+                        <div class="row">
+                            {{> afQuickField name='madeAt' label='Data' formgroup-class='col-md-4'}}
+                        </div>
+                        {{#if formType.hasMaintenance }}
+                            <div class="row">
+                                {{> afQuickField name='hours' formgroup-class='col-md-4'}}
+                                {{> afQuickField name='actionType' type='select' options=actionTypeOptions firstOption=false formgroup-class='col-md-8'}}
+                            </div>
+                            <div class="row">
+                                {{> afQuickField name='description' formgroup-class='col-md-12'}}
+                            </div>
+                            <div class="row">
+                                {{> afQuickField name='partsUsed' formgroup-class='col-md-12'}}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {{> afQuickField name='manCost'}}
+                                    {{> afQuickField name='partsCost'}}
+                                </div>
+                                <div class="col-md-8">
+                                    {{> afQuickField name='serviceNote'}}
+                                    {{> afQuickField name='invoice'}}
+                                </div>
+                            </div>
+                        {{/if}}                        
+                        
+                
                 </div>
             
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
+                {{/autoForm}}
             </div>
         </div>
     </div>

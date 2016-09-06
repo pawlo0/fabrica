@@ -6,6 +6,7 @@ import { removeElement } from '../api/elements.js';
 
 import { Elements } from '../api/elements.js';
 import { Categories } from '../api/categories.js';
+import { Actions } from '../api/actions.js';
 
 import './elementDetails.html';
 
@@ -96,11 +97,22 @@ Template.editElementModal.events({
 });
 
 Template.addActionModal.helpers({
+    'actions'(){
+        return Actions;
+    },
     'formType'(){
         let formType = {};
         formType[this.elementFormType] = true;
         return formType;
+    },
+    'actionTypeOptions'(){
+        return [
+                {value: 'repair', label: 'Reparação'},
+                {value: 'preventive', label: 'Manutenção preventiva'},
+                {value: 'hoursRegister', label: 'Registo Horas'}
+            ];
     }
+    
 });
 
 AutoForm.hooks({
@@ -115,6 +127,18 @@ AutoForm.hooks({
             } else {
                 console.log(error);
             }
+        },
+    },
+    insertActionForm: {
+        before: {
+            method(doc){
+                doc.plant = Meteor.user().profile.plant;
+                doc.elementId = Elements.findOne(FlowRouter.getParam('Id')).elementId;
+                return doc;
+            }
+        },
+        onSuccess: function(formType, result) {
+            Modal.hide('addActionModal');
         },
     }
 });
