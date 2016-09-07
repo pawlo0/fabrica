@@ -32,3 +32,4 @@ session
 fortawesome:fontawesome
 huaming:js-xlsx
 pfafman:filesaver
+momentjs:moment

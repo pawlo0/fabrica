@@ -67,3 +67,6 @@ Meteor.publish('singleElement', function(Id){
     }
 });
 
+Meteor.publish('actions', function(Id){
+    return Actions.find({elementId: Elements.findOne(Id)._id});
+});

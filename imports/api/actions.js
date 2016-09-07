@@ -1,6 +1,8 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
+import { Elements } from './elements.js';
+
 export const Actions = new Mongo.Collection('actions');
 
 const schema = new SimpleSchema({
@@ -8,8 +10,11 @@ const schema = new SimpleSchema({
         type: Date,
         label: "Data"
     },
+    element: {
+        type: String
+    },
     elementId: {
-        type: String,
+        type: String
     },
     plant: {
         type: String,

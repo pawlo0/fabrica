@@ -1,6 +1,7 @@
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import { AutoForm } from 'meteor/aldeed:autoform';
+import { moment } from 'meteor/momentjs:moment';
 
 import { removeElement } from '../api/elements.js';
 
@@ -15,6 +16,7 @@ Template.elementDetails.onCreated(function(){
 
    self.autorun(function(){
        self.subscribe('singleElement', FlowRouter.getParam('Id'));
+       self.subscribe('actions', FlowRouter.getParam('Id'));
    });
 });
 
@@ -38,6 +40,20 @@ Template.elementDetails.helpers({
     },
     'isOnTime'(){
         return true;
+    },
+    'actionsForThisElement'(){
+        return Actions.find({elementId: FlowRouter.getParam('Id'), $or: [{actionType: 'repair'}, {actionType: 'preventive'}]}).count() === 0 ? false : Actions.find({elementId: FlowRouter.getParam('Id'), $or: [{actionType: 'repair'}, {actionType: 'preventive'}]});
+    },
+    'formatDate'(date){
+        return moment(date).format("YYYY-MM-DD");
+    },
+    'maintenanceType'(actionType){
+        if (actionType === 'repair') {
+            return "Reparação";
+        }
+        if (actionType === 'preventive') {
+            return "Manutenção Preventiva";
+        }
     }
 });
 
@@ -133,7 +149,8 @@ AutoForm.hooks({
         before: {
             method(doc){
                 doc.plant = Meteor.user().profile.plant;
-                doc.elementId = Elements.findOne(FlowRouter.getParam('Id')).elementId;
+                doc.elementId = Elements.findOne(FlowRouter.getParam('Id'))._id;
+                doc.element = Elements.findOne(FlowRouter.getParam('Id')).elementId;
                 return doc;
             }
         },
