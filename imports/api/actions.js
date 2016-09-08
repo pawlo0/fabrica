@@ -22,7 +22,7 @@ const schema = new SimpleSchema({
     actionType: {
         type: String,
         label: "Tipo",
-        allowedValues: ["calibration", "verification", "repair", "preventive", "hoursRegister", "levelRegister"]
+        allowedValues: ["calibration", "verification", "repair", "preventive"]
     },
     hours: {
         type: Number,

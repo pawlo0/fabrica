@@ -116,7 +116,13 @@
                         {{else}}
                             <div class="alert alert-danger" role="alert">
                                 <h3>Estado manutenção: <strong>Por fazer</strong></h3>
-                                <p>Manutenção expirou em: <strong>{{nextActionDate}}</strong></p>
+                                <hr/>
+                                {{#if wasDateThatExpired}}
+                                    <p>Manutenção expirou em: <strong>{{nextActionDate}}</strong></p>
+                                {{else}}
+                                    <p>Equipamento já completou as <strong>{{nextActionHours}}</strong> horas.</p>
+                                {{/if}}
+                                <hr/>
                                 {{#if frequencyHours}}
                                     <p>Frequência Manutenção (o que atingir primeiro): <strong>{{frequencyMonths}} Meses</strong> ou <strong>{{frequencyHours}} Horas</strong> de operação</p>
                                 {{else}}

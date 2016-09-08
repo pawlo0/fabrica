@@ -17,11 +17,14 @@ Template.elementDetails.onCreated(function(){
    self.autorun(function(){
        self.subscribe('singleElement', FlowRouter.getParam('Id'));
        self.subscribe('actions', FlowRouter.getParam('Id'));
-       const lastAction = Actions.findOne({elementId: FlowRouter.getParam('Id'), actionType: {$nin: ['hoursRegister', 'levelRegister']}}, {sort: {madeAt: -1}});
+       // Making a reactive var, with the lastAction for this element.
+       const lastAction = Actions.findOne({elementId: FlowRouter.getParam('Id')}, {sort: {madeAt: -1}});
        if (lastAction) {
            const element = Elements.findOne(FlowRouter.getParam('Id'));
+           // Calculates the nextActionDate from the element's frequency months
            self.nextActionDate = new ReactiveVar( new Date(new Date(lastAction.madeAt).setMonth(lastAction.madeAt.getMonth() + element.frequencyMonths)) );
            if(element.frequencyHours) {
+               // Calculates the nextActionHours from the element's frequency hours
                self.nextActionHours = new ReactiveVar( lastAction.hours + element.frequencyHours );
            }
        }
@@ -58,16 +61,24 @@ Template.elementDetails.helpers({
         const nextActionDate = Template.instance().nextActionDate;
         const nextActionHours = Template.instance().nextActionHours;
         const lastAction = Actions.findOne({elementId: FlowRouter.getParam('Id')}, {sort: {madeAt: -1}});
+        // If there's a frequency established for this elements but there's no actions, then it isn't on time.
+        if (!lastAction && this.frequencyMonths) {
+            return false;
+        }
+        // If nextActionDate is inferior than today, than it isn't on time.
         if (nextActionDate && nextActionDate.get() < new Date()) {
             return false;
         }
-        if (this.frequencyMonths && nextActionHours && lastAction && nextActionHours.get() < lastAction.hours + this.frequencyMonths){
+        // If there's frenquencyHours established for this elements and the nextActionHours is inferior than the hours registered in the last action
+        // then it isn't on time.
+        if (this.frequencyMonths && nextActionHours && nextActionHours.get() < lastAction.hours + this.frequencyMonths){
             return false;
         }
+        // If it arrived here, then it is on time.
         return true;
     },
     'actionsForThisElement'(){
-        return Actions.find({elementId: FlowRouter.getParam('Id'), $or: [{actionType: 'repair'}, {actionType: 'preventive'}]}).count() === 0 ? false : Actions.find({elementId: FlowRouter.getParam('Id'), $or: [{actionType: 'repair'}, {actionType: 'preventive'}]});
+        return Actions.find({elementId: FlowRouter.getParam('Id')}).count() === 0 ? false : Actions.find({elementId: FlowRouter.getParam('Id')}, {sort: {madeAt: -1}});
     },
     'formatDate'(date){
         return moment(date).format("YYYY-MM-DD");
@@ -79,6 +90,10 @@ Template.elementDetails.helpers({
         if (actionType === 'preventive') {
             return "Manutenção Preventiva";
         }
+    },
+    'wasDateThatExpired'(){
+        const nextActionDate = Template.instance().nextActionDate;
+        return nextActionDate && nextActionDate.get() < new Date() ? true : false;
     }
 });
 
