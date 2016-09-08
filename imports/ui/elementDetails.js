@@ -17,6 +17,14 @@ Template.elementDetails.onCreated(function(){
    self.autorun(function(){
        self.subscribe('singleElement', FlowRouter.getParam('Id'));
        self.subscribe('actions', FlowRouter.getParam('Id'));
+       const lastAction = Actions.findOne({elementId: FlowRouter.getParam('Id'), actionType: {$nin: ['hoursRegister', 'levelRegister']}}, {sort: {madeAt: -1}});
+       if (lastAction) {
+           const element = Elements.findOne(FlowRouter.getParam('Id'));
+           self.nextActionDate = new ReactiveVar( new Date(new Date(lastAction.madeAt).setMonth(lastAction.madeAt.getMonth() + element.frequencyMonths)) );
+           if(element.frequencyHours) {
+               self.nextActionHours = new ReactiveVar( lastAction.hours + element.frequencyHours );
+           }
+       }
    });
 });
 
@@ -38,7 +46,24 @@ Template.elementDetails.helpers({
     'hasPeriodicity'(){
         return this.frequencyMonths > 0 ? true : false;
     },
+    'nextActionDate'(){
+        const nextActionDate = Template.instance().nextActionDate;
+        return nextActionDate ? moment(nextActionDate.get()).format("YYYY-MM-DD") : "";
+    },
+    'nextActionHours'(){
+        const nextActionHours = Template.instance().nextActionHours;
+        return nextActionHours ? nextActionHours.get() : "";
+    },
     'isOnTime'(){
+        const nextActionDate = Template.instance().nextActionDate;
+        const nextActionHours = Template.instance().nextActionHours;
+        const lastAction = Actions.findOne({elementId: FlowRouter.getParam('Id')}, {sort: {madeAt: -1}});
+        if (nextActionDate && nextActionDate.get() < new Date()) {
+            return false;
+        }
+        if (this.frequencyMonths && nextActionHours && lastAction && nextActionHours.get() < lastAction.hours + this.frequencyMonths){
+            return false;
+        }
         return true;
     },
     'actionsForThisElement'(){

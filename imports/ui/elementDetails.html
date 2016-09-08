@@ -104,7 +104,9 @@
                         {{#if isOnTime }}
                             <div class="alert alert-success" role="alert">
                                 <h3>Estado manutenção: <strong>Feita</strong></h3>
-                                <p>Próxima manutenção: </p>
+                                <hr/>
+                                <p>Próxima manutenção: <strong>{{nextActionDate}}</strong>{{#if nextActionHours}} ou <strong>{{nextActionHours}}</strong> Horas.{{/if}}</p>
+                                <hr/>
                                 {{#if frequencyHours}}
                                     <p>Frequência Manutenção (o que atingir primeiro): <strong>{{frequencyMonths}} Meses</strong> ou <strong>{{frequencyHours}} Horas</strong> de operação</p>
                                 {{else}}
@@ -114,7 +116,7 @@
                         {{else}}
                             <div class="alert alert-danger" role="alert">
                                 <h3>Estado manutenção: <strong>Por fazer</strong></h3>
-                                <p>Manutenção expirou em: </p>
+                                <p>Manutenção expirou em: <strong>{{nextActionDate}}</strong></p>
                                 {{#if frequencyHours}}
                                     <p>Frequência Manutenção (o que atingir primeiro): <strong>{{frequencyMonths}} Meses</strong> ou <strong>{{frequencyHours}} Horas</strong> de operação</p>
                                 {{else}}
