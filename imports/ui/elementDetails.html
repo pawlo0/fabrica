@@ -84,6 +84,156 @@
                                 <p>Frequência calibração: <strong>{{frequencyMonths}} Meses</strong></p>
                             </div>
                         {{/if}}
+                        {{#if actionsForThisElement}}
+                            <h3>Lista de calibrações</h3>
+                            <div class="panel-group" id="actionsForThisElement" role="tablist" aria-multiselectable="true">
+                                {{#each actionsForThisElement}}
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="heading-{{_id}}">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#actionsForThisElement" href="#collapse-{{_id}}" aria-expanded="true" aria-controls="collapse-{{_id}}">
+                                                {{formatDate madeAt}}
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse-{{_id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{_id}}">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-xs-4 text-center">
+                                                    <p>Padrão utilizado:</p>
+                                                    <p><strong>{{reference}}</strong></p>
+                                                    <hr/>
+                                                    <p>Percentagem máxima:</p>
+                                                    <p><strong>{{calculateCalibration.percentMax}}%</strong></p>
+                                                    <hr/>
+                                                    <p>Incerteza máxima:</p>
+                                                    <p><strong>{{calculateCalibration.incMax}}</strong></p>
+                                                </div>
+                                                <div class="col-xs-8">
+                                                    <div class="well well-sm">
+                                                        <div class="row">
+                                                            <div class="col-xs-4">Medida</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">1</div>
+                                                                <div class="col-xs-3">2</div>
+                                                                <div class="col-xs-3">3</div>
+                                                                <div class="col-xs-3">4</div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- /well -->
+                                                    <div class="well well-sm">
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Valor inicial</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{in1}}</div>
+                                                                <div class="col-xs-3">{{in2}}</div>
+                                                                <div class="col-xs-3">{{in3}}</div>
+                                                                <div class="col-xs-3">{{in4}}</div>
+                                                            </div>
+                                                        </div>                                                        
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Valor padrão</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{vp1}}</div>
+                                                                <div class="col-xs-3">{{vp2}}</div>
+                                                                <div class="col-xs-3">{{vp3}}</div>
+                                                                <div class="col-xs-3">{{vp4}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Inc. padrão</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{icp1}}</div>
+                                                                <div class="col-xs-3">{{icp2}}</div>
+                                                                <div class="col-xs-3">{{icp3}}</div>
+                                                                <div class="col-xs-3">{{icp4}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- /well -->
+                                                    <div class="well well-sm">
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Interação 1</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{it11}}</div>
+                                                                <div class="col-xs-3">{{it12}}</div>
+                                                                <div class="col-xs-3">{{it13}}</div>
+                                                                <div class="col-xs-3">{{it14}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Interação 2</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{it21}}</div>
+                                                                <div class="col-xs-3">{{it22}}</div>
+                                                                <div class="col-xs-3">{{it23}}</div>
+                                                                <div class="col-xs-3">{{it24}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Interação 3</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{it31}}</div>
+                                                                <div class="col-xs-3">{{it32}}</div>
+                                                                <div class="col-xs-3">{{it33}}</div>
+                                                                <div class="col-xs-3">{{it34}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row no-margin">
+                                                            <div class="col-xs-4">Interação 4</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{it41}}</div>
+                                                                <div class="col-xs-3">{{it42}}</div>
+                                                                <div class="col-xs-3">{{it43}}</div>
+                                                                <div class="col-xs-3">{{it44}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- /well -->
+                                                    <div class="well well-sm">
+                                                        <div class="row">
+                                                            <div class="col-xs-4">Média</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{calculateCalibration.col1.average}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col2.average}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col3.average}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col4.average}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-4">Desv. Padrão</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{calculateCalibration.col1.stDev}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col2.stDev}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col3.stDev}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col4.stDev}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-4">Incerteza</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{calculateCalibration.col1.inc}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col2.inc}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col3.inc}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col4.inc}}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-4">Percentagem</div>
+                                                            <div class="col-xs-8 text-center">
+                                                                <div class="col-xs-3">{{calculateCalibration.col1.percent}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col2.percent}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col3.percent}}</div>
+                                                                <div class="col-xs-3">{{calculateCalibration.col4.percent}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- /well -->                                                    
+                                                </div><!-- /col-xs-8 -->
+                                            </div><!-- /row -->
+                                        </div><!-- /panel-body -->
+                                    </div>
+                                </div>
+                                {{/each}}
+                            </div>
+                        {{/if}}                        
                     {{/if}}
                     {{#if formType.hasSetpoint }}
                         {{#if isOnTime }}
@@ -440,6 +590,12 @@
                                     </div>
                                 </div>
                             </div><!-- /row -->
+                            <hr/>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    {{> afQuickField name='memo' type='textarea'}}
+                                </div>
+                            </div>
                         {{/if}}
                 
                 </div>

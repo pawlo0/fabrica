@@ -94,6 +94,37 @@ Template.elementDetails.helpers({
     'wasDateThatExpired'(){
         const nextActionDate = Template.instance().nextActionDate;
         return nextActionDate && nextActionDate.get() < new Date() ? true : false;
+    },
+    'calculateCalibration'(){
+        const element = Elements.findOne(FlowRouter.getParam('Id'));
+        const isDigital = element.isDigital;
+        const resolution = element.resolution * 1;
+        const scale = element.scale * 1;
+        
+        var result = {incMax: 0, percentMax: 0};
+        for (var i = 1; i <= 4; i++) {
+            const values = [this["it1"+i], this["it2"+i], this["it3"+i],this["it4"+i]];
+            const icp = this["icp"+i];
+            const vp = this["vp"+i];
+            
+            const average = calcAverage(values);
+            const stDev = standardDeviation(values);
+            
+            const inc = calculateInc(icp, isDigital, stDev, resolution, average, vp);
+
+            let percent = icp > 0 ? inc / scale * 100 : 0;
+            
+            if (inc > result.incMax) { result.incMax = Math.round(inc*1000)/1000; }
+            if (percent > result.percentMax) { result.percentMax = Math.round(percent*100)/100; }
+            
+            result["col"+i] = {
+                average,
+                stDev: Math.round(stDev*1000)/1000,
+                inc: Math.round(inc*1000)/1000,
+                percent: Math.round(percent*100)/100 + "%"
+            };
+        }
+        return result;
     }
 });
 
@@ -198,11 +229,7 @@ Template.addActionModal.events({
             const average = calcAverage(values);
             const stDev = standardDeviation(values);
             
-            let inc = icp > 0 ? 
-                isDigital ?
-                    Math.sqrt(Math.pow((1.7*stDev)/2, 2) + Math.pow((resolution/2)/Math.sqrt(3),2) + Math.pow(icp/2, 2) + Math.pow((average - vp)/Math.sqrt(3),2) )*2 :
-                    Math.sqrt(Math.pow((1.7*stDev)/2, 2) + Math.pow((resolution/4)/Math.sqrt(3),2) + Math.pow(icp/2, 2) + Math.pow((average - vp)/Math.sqrt(3),2) )*2 :
-                0;
+            const inc = calculateInc(icp, isDigital, stDev, resolution, average, vp);
 
             let percent = icp > 0 ? inc / scale * 100 : 0;
             
@@ -253,7 +280,7 @@ AutoForm.hooks({
                         doc.actionType = 'verification';
                     } else {
                         console.log("Error: action type missing");
-                        return false
+                        return false;
                     }
                 }
                 return doc;
@@ -265,34 +292,51 @@ AutoForm.hooks({
     }
 });
 
-
+function calculateInc(icp, isDigital, stDev, resolution, average, vp) {
+    if (icp > 0) { 
+        if (isDigital) {
+            return Math.sqrt(Math.pow((1.7*stDev)/2, 2) + Math.pow((resolution/2)/Math.sqrt(3),2) + Math.pow(icp/2, 2) + Math.pow((average - vp)/Math.sqrt(3),2) )*2;
+        } else {
+            return Math.sqrt(Math.pow((1.7*stDev)/2, 2) + Math.pow((resolution/4)/Math.sqrt(3),2) + Math.pow(icp/2, 2) + Math.pow((average - vp)/Math.sqrt(3),2) )*2;
+        }
+    } else {
+        return 0;
+    }
+}
 
 function standardDeviation(values){
     var avg = calcAverage(values), avgSquareDiff = 0;
-
-    var squareDiffs = values.map(function(value){
-        var diff = value - avg;
-        var sqrDiff = diff * diff;
-        return sqrDiff;
-    });
-    if (values.length > 4) {
-        avgSquareDiff = calcAverage(squareDiffs);
+    if (avg) {
+        var squareDiffs = values.map(function(value){
+            var diff = value - avg;
+            var sqrDiff = diff * diff;
+            return sqrDiff;
+        });
+        if (values.length > 4) {
+            avgSquareDiff = calcAverage(squareDiffs);
+        } else {
+            avgSquareDiff = calcAverage(squareDiffs, true);
+        }
+    
+        var stdDev = Math.sqrt(avgSquareDiff);
+        return stdDev;
     } else {
-        avgSquareDiff = calcAverage(squareDiffs, true);
+        return false;
     }
-
-    var stdDev = Math.sqrt(avgSquareDiff);
-    return stdDev;
 }
 
 
 
 function calcAverage(data, lessOne){
-    var sum = data.reduce(function(sum, value){
-        return sum + value;
+    let count = 0;
+    let sum = data.reduce(function(sum, value){
+        if (value) {
+            count++;
+            return sum + value;
+        }
     }, 0);
     
-    let avg = lessOne ? sum / (data.length - 1) : sum / (data.length);
+    let avg = lessOne ? sum / (count - 1) : sum / (count);
     
-    return avg;
+    return count > 0 ? avg : false;
 }
