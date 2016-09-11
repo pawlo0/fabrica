@@ -5,3 +5,14 @@
 .js-addElement:hover {
     cursor: pointer;
 }
+
+
+form .no-margin .col-xs-3 {
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-bottom: 1px;
+}
+
+form .addMarginBottom {
+    margin-bottom: 15px;
+}

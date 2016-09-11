@@ -152,6 +152,11 @@ Template.editElementModal.events({
     }
 });
 
+Template.addActionModal.onCreated(function(){
+   this.calculateCalibration = new ReactiveVar({}); 
+});
+
+
 Template.addActionModal.helpers({
     'actions'(){
         return Actions;
@@ -167,8 +172,55 @@ Template.addActionModal.helpers({
                 {value: 'preventive', label: 'Manutenção preventiva'},
                 {value: 'hoursRegister', label: 'Registo Horas'}
             ];
+    },
+    'calculateCalibration'() {
+        return Template.instance().calculateCalibration.get();
     }
-    
+});
+
+Template.addActionModal.events({
+    'change #insertActionForm'(event, template){
+        
+        const element = Elements.findOne(FlowRouter.getParam('Id'));
+        const isDigital = element.isDigital;
+        const resolution = element.resolution * 1;
+        const scale = element.scale * 1;
+        
+        var result = {incMax: 0, percentMax: 0};
+        for (var i = 1; i <= 4; i++) {
+            const values = [event.currentTarget["it1"+i].value *1,
+            event.currentTarget["it2"+i].value *1,
+            event.currentTarget["it3"+i].value *1,
+            event.currentTarget["it4"+i].value *1];
+            const icp = event.currentTarget["icp"+i].value *1;
+            const vp = event.currentTarget["vp"+i].value *1;
+            
+            const average = calcAverage(values);
+            const stDev = standardDeviation(values);
+            
+            let inc = icp > 0 ? 
+                isDigital ?
+                    Math.sqrt(Math.pow((1.7*stDev)/2, 2) + Math.pow((resolution/2)/Math.sqrt(3),2) + Math.pow(icp/2, 2) + Math.pow((average - vp)/Math.sqrt(3),2) )*2 :
+                    Math.sqrt(Math.pow((1.7*stDev)/2, 2) + Math.pow((resolution/4)/Math.sqrt(3),2) + Math.pow(icp/2, 2) + Math.pow((average - vp)/Math.sqrt(3),2) )*2 :
+                0;
+
+            let percent = icp > 0 ? inc / scale * 100 : 0;
+            
+            if (inc > result.incMax) { result.incMax = Math.round(inc*1000)/1000; }
+            if (percent > result.percentMax) { result.percentMax = Math.round(percent*100)/100; }
+            
+            result["col"+i] = {
+                average,
+                stDev: Math.round(stDev*1000)/1000,
+                inc: Math.round(inc*1000)/1000,
+                percent: Math.round(percent*100)/100 + "%"
+            };
+            
+        }
+        
+        template.calculateCalibration.set(result);
+        
+    }
 });
 
 AutoForm.hooks({
@@ -188,9 +240,22 @@ AutoForm.hooks({
     insertActionForm: {
         before: {
             method(doc){
+                const element = Elements.findOne(FlowRouter.getParam('Id'));
+                
                 doc.plant = Meteor.user().profile.plant;
-                doc.elementId = Elements.findOne(FlowRouter.getParam('Id'))._id;
-                doc.element = Elements.findOne(FlowRouter.getParam('Id')).elementId;
+                doc.elementId = element._id;
+                doc.element = element.elementId;
+                
+                if (!doc.actionType) {
+                    if (element.elementFormType == 'hasCalibration') {
+                        doc.actionType = 'calibration';
+                    } else if (element.elementFormType == 'hasSetpoint') {
+                        doc.actionType = 'verification';
+                    } else {
+                        console.log("Error: action type missing");
+                        return false
+                    }
+                }
                 return doc;
             }
         },
@@ -199,3 +264,35 @@ AutoForm.hooks({
         },
     }
 });
+
+
+
+function standardDeviation(values){
+    var avg = calcAverage(values), avgSquareDiff = 0;
+
+    var squareDiffs = values.map(function(value){
+        var diff = value - avg;
+        var sqrDiff = diff * diff;
+        return sqrDiff;
+    });
+    if (values.length > 4) {
+        avgSquareDiff = calcAverage(squareDiffs);
+    } else {
+        avgSquareDiff = calcAverage(squareDiffs, true);
+    }
+
+    var stdDev = Math.sqrt(avgSquareDiff);
+    return stdDev;
+}
+
+
+
+function calcAverage(data, lessOne){
+    var sum = data.reduce(function(sum, value){
+        return sum + value;
+    }, 0);
+    
+    let avg = lessOne ? sum / (data.length - 1) : sum / (data.length);
+    
+    return avg;
+}
